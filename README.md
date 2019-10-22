@@ -1,1 +1,91 @@
-# OData.Client.Manager
+# ODataClientManager
+
+## Purpose
+
+This repository provides a C# based OData client manager library.
+The Manager uses the `IODataClient` implementation of `Simple.OData.Client` to communicate with OData APIs and is able handle authorization and versioning requirements on top.
+
+## Getting started
+
+The easiest way to start using the OData.Client.Manager is to install it’s Nuget package:
+
+```sh
+Install-Package OData.Client.Manager
+```
+
+In the source file where you will be using the `ODataManager` import the namespace:
+
+```cs
+using OData.Client.Manager;
+```
+
+### Quickstart
+
+The following code snipped shows an example of how to use the `IODataManger` implementation.
+This example doesn't make use of OIDC authentication!
+
+```cs
+// Create the manager
+var odataEndpoint = new Uri("http://localhost:12345/api");
+var manager = new ODataManager(odataEndpoint);
+
+// Use the client of the manager (example of the typed fluent API syntax)
+IEnumerable<LibraryItem> entities = await manager.Client
+    .For<LibraryItem>()
+    .FindEntriesAsync();
+
+// Use the client of the manager (example of the dynamic fluent API syntax)
+var dx = ODataDynamic.Expression;
+IEnumerable<dynamic> entities = await manager.Client
+    .For(dx.LibraryItems)
+    .FindEntriesAsync();
+```
+
+For more information about how to use the Odata client, please read the [documentation of Simple.OData.Client](https://github.com/simple-odata-client/Simple.OData.Client/wiki).
+
+### Make use of autenticated and versioned requests
+
+* To make use of authentication, just use one of the existing authenticators in the `OData.Client.Manager.Authenticators` namespace or create your own by implementing the `IAuthenticato` interface.
+* To make use of authentication, just use one of the existing authenticators in the `OData.Client.Manager.Versioning` namespace or create your own by implementing the `IVersioningManager` interface.
+
+```cs
+// Setup the configuration
+var config = new ODataManagerConfiguration(new Uri("http://localhost:12345/api"))
+{
+    // Authenticated requests
+    Authenticator = new OidcAuthenticator(new OidcSettings
+    {
+        AuthUri = new Uri("http://localhost:5000"),
+        ClientId = "ClientAppX",
+        ClientSecret = "Secret",
+        Username = "User",
+        Password = "Password",
+        Scope = "api1",
+
+        GrantType = "Password", // Default
+        DiscoveryPolicy = new DiscoveryPolicy { RequireHttps = false },
+    }),
+
+    // Versioned requests
+    VersioningManager = new QueryParamVersioningManager("1.2", "api-version"), 
+};
+
+// Use the configuration in the ctor of the manager
+var manager = new ODataManager(config);
+```
+
+## FAQ
+
+1. Why I get the error `Https required`?
+    * OIDC endponts must provide an encrypted connection (https) by default (except URIs of localhost). To disable this requirement, make use of the `OidcSettings` and set `RequireHttps` of the `DiscoveryPolicy` property to `false`: `settings.DiscoveryPolicy = new DiscoveryPolicy { RequireHttps = requireHttps };`.
+
+## Links
+
+* OData: <http://www.odata.org/getting-started>
+* Simple.OData.Client - Documentation: <https://github.com/simple-odata-client/Simple.OData.Client/wiki>
+* OIDC: <https://openid.net/connect>
+* IdentityModel - Documentation: <https://identitymodel.readthedocs.io>
+
+## Open Source License Acknowledgements and Third-Party Copyrights
+
+* Icon made by [Freepik](https://www.flaticon.com/authors/freepik)

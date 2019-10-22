@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29102.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OData.Client.Manager", "OData.Client.Manager\OData.Client.Manager.csproj", "{083B92DC-DD57-4D4A-AAF4-C6740685C603}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OData.Client.Manager.Tests", "OData.Client.Manager.Tests\OData.Client.Manager.Tests.csproj", "{083B92DC-DD57-4D4A-AAF4-A6740685C602}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{083B92DC-DD57-4D4A-AAF4-C6740685C603}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{083B92DC-DD57-4D4A-AAF4-C6740685C603}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{083B92DC-DD57-4D4A-AAF4-C6740685C603}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{083B92DC-DD57-4D4A-AAF4-C6740685C603}.Release|Any CPU.Build.0 = Release|Any CPU
+		{083B92DC-DD57-4D4A-AAF4-A6740685C602}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{083B92DC-DD57-4D4A-AAF4-A6740685C602}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{083B92DC-DD57-4D4A-AAF4-A6740685C602}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{083B92DC-DD57-4D4A-AAF4-A6740685C602}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1E70B770-3B2F-4723-A5E1-4E411EB9F7E2}
+	EndGlobalSection
+EndGlobal
