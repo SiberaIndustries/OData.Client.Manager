@@ -13,7 +13,7 @@ The Manager uses the `IODataClient` implementation of `Simple.OData.Client` to c
 
 ## Getting started
 
-The easiest way to start using the OData.Client.Manager is to install it’s Nuget package:
+The easiest way to start using the `ODataManager` is to install it’s Nuget package:
 
 ```sh
 Install-Package OData.Client.Manager
@@ -28,7 +28,6 @@ using OData.Client.Manager;
 ### Quickstart
 
 The following code snipped shows an example of how to use the `IODataManger` implementation.
-This example doesn't make use of OIDC authentication!
 
 ```cs
 // Create the manager
@@ -36,14 +35,14 @@ var odataEndpoint = new Uri("http://localhost:12345/api");
 var manager = new ODataManager(odataEndpoint);
 
 // Use the client of the manager (example of the typed fluent API syntax)
-IEnumerable<LibraryItem> entities = await manager.Client
-    .For<LibraryItem>()
+IEnumerable<Product> entities = await manager.Client
+    .For<Product>()
     .FindEntriesAsync();
 
 // Use the client of the manager (example of the dynamic fluent API syntax)
 var dx = ODataDynamic.Expression;
 IEnumerable<dynamic> entities = await manager.Client
-    .For(dx.LibraryItems)
+    .For(dx.Products)
     .FindEntriesAsync();
 ```
 
@@ -51,7 +50,7 @@ For more information about how to use the Odata client, please read the [documen
 
 ### Make use of autenticated and versioned requests
 
-* To make use of authentication, just use one of the existing authenticators in the `OData.Client.Manager.Authenticators` namespace or create your own by implementing the `IAuthenticato` interface.
+* To make use of authentication, just use one of the existing authenticators in the `OData.Client.Manager.Authenticators` namespace or create your own by implementing the `IAuthenticator` interface.
 * To make use of authentication, just use one of the existing managers in the `OData.Client.Manager.Versioning` namespace or create your own by implementing the `IVersioningManager` interface.
 
 ```cs
@@ -73,7 +72,7 @@ var config = new ODataManagerConfiguration(new Uri("http://localhost:12345/api")
     }),
 
     // Versioned requests
-    VersioningManager = new QueryParamVersioningManager("1.2", "api-version"), 
+    VersioningManager = new QueryParamVersioningManager("1.2", "api-version")
 };
 
 // Use the configuration in the ctor of the manager
@@ -87,10 +86,10 @@ var manager = new ODataManager(config);
 
 ## Links
 
-* OData: <http://www.odata.org/getting-started>
-* Simple.OData.Client - Documentation: <https://github.com/simple-odata-client/Simple.OData.Client/wiki>
+* OData: <http://www.odata.org/getting-started> or <https://docs.microsoft.com/odata>
+* Simple.OData.Client: <https://github.com/simple-odata-client/Simple.OData.Client/wiki>
+* IdentityModel: <https://identitymodel.readthedocs.io>
 * OIDC: <https://openid.net/connect>
-* IdentityModel - Documentation: <https://identitymodel.readthedocs.io>
 
 ## Open Source License Acknowledgements and Third-Party Copyrights
 
