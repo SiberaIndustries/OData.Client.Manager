@@ -16,6 +16,7 @@ namespace OData.Client.Manager.Authenticators
             header = new AuthenticationHeaderValue(Scheme, token ?? throw new ArgumentNullException(nameof(token)));
         }
 
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         private JwtAuthenticator()
         {
             throw new NotSupportedException();

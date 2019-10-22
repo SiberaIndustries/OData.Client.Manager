@@ -24,6 +24,7 @@ namespace OData.Client.Manager.Authenticators
             discoveryCache = new DiscoveryCache(this.oidcSettings.AuthUri?.ToString(), () => httpClient, discoveryPolicy);
         }
 
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         private OidcAuthenticator()
         {
             throw new NotSupportedException();

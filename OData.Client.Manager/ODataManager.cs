@@ -55,6 +55,7 @@ namespace OData.Client.Manager
         {
         }
 
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         private ODataManager()
         {
             throw new NotSupportedException();

@@ -46,5 +46,19 @@ namespace OData.Client.Manager.Tests
 
             Assert.Equal("https://localhost:5000/", config.BaseUri.ToString());
         }
+
+        [Fact]
+        public void CtorWithOnlyOneApiEndpoint_Exception()
+        {
+            var ex = Assert.Throws<InvalidOperationException>(() =>
+            {
+                _ = new ODataManagerConfiguration(new HttpClient { BaseAddress = new Uri("http://localhost") })
+                {
+                    BaseUri = new Uri("http://localhost")
+                };
+            });
+
+            Assert.Equal("Unable to set BaseUri when BaseAddress is specified on HttpClient.", ex.Message);
+        }
     }
 }

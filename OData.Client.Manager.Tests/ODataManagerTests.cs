@@ -1,9 +1,10 @@
 ﻿using Extensions.Dictionary;
+using OData.Client.Manager.Authenticators;
+using OData.Client.Manager.Versioning;
 using Simple.OData.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -15,17 +16,13 @@ namespace OData.Client.Manager.Tests
         private static readonly Uri BaseUri = new Uri(BaseAdress);
 
         [Fact]
-        public void CtorWithOnlyOneApiEndpoint_Exception()
+        public void CtorWithNullValues_Exception()
         {
-            var ex = Assert.Throws<InvalidOperationException>(() =>
-            {
-                _ = new ODataManagerConfiguration(new HttpClient { BaseAddress = new Uri("http://localhost") })
-                {
-                    BaseUri = new Uri("http://localhost")
-                };
-            });
+            var ex1 = Assert.Throws<ArgumentNullException>(() => new ODataManager(configuration: null));
+            Assert.Equal("configuration", ex1.ParamName);
 
-            Assert.Equal("Unable to set BaseUri when BaseAddress is specified on HttpClient.", ex.Message);
+            var ex2 = Assert.Throws<InvalidOperationException>(() => new ODataManager(apiEndpoint: null));
+            Assert.Equal("Unable to create client session with no URI specified.", ex2.Message);
         }
 
         [Fact]
@@ -39,7 +36,11 @@ namespace OData.Client.Manager.Tests
         public async Task UseODataClientAndOnTraceAndConverter_Success()
         {
             var trace = default(string);
-            ODataManagerConfiguration config = new ODataManagerConfiguration(BaseUri);
+            ODataManagerConfiguration config = new ODataManagerConfiguration(BaseUri)
+            {
+                Authenticator = new BasicAuthenticator("user", "pw"),
+                VersioningManager = new QueryParamVersioningManager("1.0")
+            };
             config.TypeCache.Converter.RegisterTypeConverter<Product>((IDictionary<string, object> dict) => dict.ToInstance<Product>());
             config.OnTrace = (format, args) => trace = string.Format(format, args);
             var manager = new ODataManager(config);

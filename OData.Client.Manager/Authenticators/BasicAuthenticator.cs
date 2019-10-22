@@ -15,6 +15,7 @@ namespace OData.Client.Manager.Authenticators
             header = new BasicAuthenticationHeaderValue(username, password);
         }
 
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         private BasicAuthenticator()
         {
             throw new NotSupportedException();
