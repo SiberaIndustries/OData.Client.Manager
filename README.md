@@ -52,7 +52,7 @@ For more information about how to use the Odata client, please read the [documen
 ### Make use of autenticated and versioned requests
 
 * To make use of authentication, just use one of the existing authenticators in the `OData.Client.Manager.Authenticators` namespace or create your own by implementing the `IAuthenticato` interface.
-* To make use of authentication, just use one of the existing authenticators in the `OData.Client.Manager.Versioning` namespace or create your own by implementing the `IVersioningManager` interface.
+* To make use of authentication, just use one of the existing managers in the `OData.Client.Manager.Versioning` namespace or create your own by implementing the `IVersioningManager` interface.
 
 ```cs
 // Setup the configuration
