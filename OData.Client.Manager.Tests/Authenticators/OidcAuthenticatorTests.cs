@@ -1,5 +1,4 @@
-﻿using FakeItEasy;
-using IdentityModel;
+﻿using IdentityModel;
 using OData.Client.Manager.Authenticators;
 using System;
 using System.Diagnostics;
@@ -76,6 +75,7 @@ namespace OData.Client.Manager.Tests.Authenticators
 
             Assert.Equal(errorMessage, error);
             Assert.NotNull(requestMessage.Headers.Authorization);
+            Assert.Equal(authenticator.Header, requestMessage.Headers.Authorization);
             Assert.StartsWith("Bearer ey", requestMessage.Headers.Authorization.ToString());
         }
 
@@ -94,10 +94,10 @@ namespace OData.Client.Manager.Tests.Authenticators
 
             string error = null;
             var replaceAuthHeader = errorMessage == null;
-            var authenticator = A.Fake<IAuthenticator>(x => x.Wrapping(new OidcAuthenticator(settings)
+            var authenticator = new OidcAuthenticator(settings)
             {
                 ReplaceAuthorizationHeader = replaceAuthHeader
-            }));
+            };
             authenticator.OnTrace += (msg) => error = msg;
 
             Assert.True(await authenticator.AuthenticateAsync(httpClient));
@@ -105,6 +105,7 @@ namespace OData.Client.Manager.Tests.Authenticators
 
             Assert.Equal(errorMessage, error);
             Assert.NotNull(httpClient.DefaultRequestHeaders.Authorization);
+            Assert.Equal(authenticator.Header, httpClient.DefaultRequestHeaders.Authorization);
             Assert.StartsWith("Bearer ey", httpClient.DefaultRequestHeaders.Authorization.ToString());
         }
 
@@ -126,6 +127,36 @@ namespace OData.Client.Manager.Tests.Authenticators
 
             ex = await Assert.ThrowsAsync<ArgumentNullException>(() => versioningManager.AuthenticateAsync(httpClient: null));
             Assert.Equal("httpClient", ex.ParamName);
+        }
+
+        [Fact]
+        public async Task GetTokenWithRefreshToken_Sucess()
+        {
+            settings.AuthUri = new Uri("http://localhost:5000");
+            settings.ClientId = "odata-manager-2";
+            settings.ClientSecret = "secret";
+            settings.Scope = "api1 offline_access";
+            settings.Username = "alice";
+            settings.Password = "alice";
+            settings.GrantType = OidcConstants.GrantTypes.Password;
+
+            string error = null;
+            var authenticator = new OidcAuthenticator(settings);
+            authenticator.OnTrace += (msg) => error = msg;
+
+
+            Assert.True(await authenticator.AuthenticateAsync(httpClient));
+
+            Assert.NotNull(httpClient.DefaultRequestHeaders.Authorization);
+            Assert.StartsWith("Bearer ey", httpClient.DefaultRequestHeaders.Authorization.ToString());
+
+            var token1 = await authenticator.GetTokenAsync(default);
+            Assert.NotNull(token1?.RefreshToken);
+
+            var token2 = await authenticator.GetTokenAsync(default);
+            Assert.NotNull(token2?.RefreshToken);
+
+            Assert.NotEqual(token1.RefreshToken, token2.RefreshToken);
         }
     }
 }

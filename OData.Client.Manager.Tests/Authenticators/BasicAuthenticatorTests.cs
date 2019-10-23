@@ -30,6 +30,7 @@ namespace OData.Client.Manager.Tests.Authenticators
 
             Assert.Equal(errorMessage, error);
             Assert.NotNull(requestMessage.Headers.Authorization);
+            Assert.Equal(authenticator.Header, requestMessage.Headers.Authorization);
             Assert.Equal(expectedAuthHeader, requestMessage.Headers.Authorization.ToString());
         }
 
@@ -51,6 +52,7 @@ namespace OData.Client.Manager.Tests.Authenticators
 
             Assert.Equal(errorMessage, error);
             Assert.NotNull(httpClient.DefaultRequestHeaders.Authorization);
+            Assert.Equal(authenticator.Header, httpClient.DefaultRequestHeaders.Authorization);
             Assert.Equal(expectedAuthHeader, httpClient.DefaultRequestHeaders.Authorization.ToString());
         }
 

@@ -47,6 +47,16 @@ namespace TestAuthorizationServer
                 RedirectUris = { "http://localhost:5000" },
                 AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                 AllowedScopes = { "api1" }
+            },
+            new Client
+            {
+                ClientId = "odata-manager-2",
+                ClientSecrets = { new Secret("secret".Sha512()) },
+                RedirectUris = { "http://localhost:5000" },
+                AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
+                AllowedScopes = { "api1" },
+                AllowOfflineAccess = true,
+                AccessTokenLifetime = 1
             }
         };
 

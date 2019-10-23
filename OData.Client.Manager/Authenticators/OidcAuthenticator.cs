@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace OData.Client.Manager.Authenticators
 {
-    public class OidcAuthenticator : IAuthenticator
+    public class OidcAuthenticator : AuthenticatorBase
     {
         private readonly OidcSettings oidcSettings;
         private readonly HttpClient httpClient;
@@ -30,13 +30,8 @@ namespace OData.Client.Manager.Authenticators
             throw new NotSupportedException();
         }
 
-        public bool ReplaceAuthorizationHeader { get; set; }
-
         /// <inheritdoc cref="IAuthenticator" />
-        public Action<string>? OnTrace { get; set; }
-
-        /// <inheritdoc cref="IAuthenticator" />
-        public Task<bool> AuthenticateAsync(HttpRequestMessage requestMessage, CancellationToken ct = default)
+        public override Task<bool> AuthenticateAsync(HttpRequestMessage requestMessage, CancellationToken ct = default)
         {
             if (requestMessage == null)
             {
@@ -53,7 +48,7 @@ namespace OData.Client.Manager.Authenticators
         }
 
         /// <inheritdoc cref="IAuthenticator" />
-        public Task<bool> AuthenticateAsync(HttpClient httpClient, CancellationToken ct = default)
+        public override Task<bool> AuthenticateAsync(HttpClient httpClient, CancellationToken ct = default)
         {
             if (httpClient == null)
             {
@@ -69,12 +64,13 @@ namespace OData.Client.Manager.Authenticators
             return GetAndSetTokenAsync(httpClient, ct);
         }
 
-        public async Task<bool> GetAndSetTokenAsync(HttpRequestMessage requestMessage, CancellationToken ct = default)
+        private async Task<bool> GetAndSetTokenAsync(HttpRequestMessage requestMessage, CancellationToken ct = default)
         {
             var localToken = await GetTokenAsync(ct).ConfigureAwait(false);
             if (localToken != null)
             {
                 requestMessage.SetBearerToken(localToken.AccessToken);
+                Header = requestMessage.Headers.Authorization;
                 return true;
             }
 
@@ -82,12 +78,13 @@ namespace OData.Client.Manager.Authenticators
             return false;
         }
 
-        public async Task<bool> GetAndSetTokenAsync(HttpClient httpClient, CancellationToken ct = default)
+        private async Task<bool> GetAndSetTokenAsync(HttpClient httpClient, CancellationToken ct = default)
         {
             var localToken = await GetTokenAsync(ct).ConfigureAwait(false);
             if (localToken != null)
             {
                 httpClient.SetBearerToken(localToken.AccessToken);
+                Header = httpClient.DefaultRequestHeaders.Authorization;
                 return true;
             }
 
