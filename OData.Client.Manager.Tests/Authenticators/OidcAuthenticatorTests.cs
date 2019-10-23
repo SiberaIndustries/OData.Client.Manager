@@ -144,7 +144,6 @@ namespace OData.Client.Manager.Tests.Authenticators
             var authenticator = new OidcAuthenticator(settings);
             authenticator.OnTrace += (msg) => error = msg;
 
-
             Assert.True(await authenticator.AuthenticateAsync(httpClient));
 
             Assert.NotNull(httpClient.DefaultRequestHeaders.Authorization);
