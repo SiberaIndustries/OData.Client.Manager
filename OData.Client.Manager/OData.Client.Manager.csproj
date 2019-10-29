@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Common">
+    <ProjectGuid>{da19bdb3-a27a-4de6-91fd-4d22e801a18c}</ProjectGuid>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>2.0.0</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Package">
+    <PackageId>OData.Client.Manager</PackageId>
+    <Authors>Tobias Sibera</Authors>
+    <Company>Sibera Industries</Company>
+    <Description>OData client manager library which uses the IODataClient implementation of Simple.OData.Client to communicate with OData APIs and handles OIDC authentication as well as request versioning requirements on top.</Description>
+    <PackageIcon>icon.png</PackageIcon>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/SiberaIndustries/OData.Client.Manager</RepositoryUrl>
+    <PackageReleaseNotes>https://github.com/SiberaIndustries/OData.Client.Manager/releases</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/SiberaIndustries/OData.Client.Manager</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>OData;netstandard;client;api;rest;versioning;authentication</PackageTags>
+
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Code Analysis">
+    <Features>IOperation</Features>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CodeAnalysisRuleSet>..\code-analysis.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="IdentityModel" Version="4.0.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.6" PrivateAssets="All" />
+    <PackageReference Include="Simple.OData.Client" Version="5.10.0.1" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.66" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" Visible="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\icon.png" Link="icon.png" Visible="false" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+</Project>

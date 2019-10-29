@@ -1,0 +1,161 @@
+﻿using IdentityModel;
+using OData.Client.Manager.Authenticators;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Xunit;
+
+namespace OData.Client.Manager.Tests.Authenticators
+{
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S3881:\"IDisposable\" should be implemented correctly", Justification = "Test case")]
+    public class OidcAuthenticatorTests : IDisposable
+    {
+        private readonly int pid;
+        private readonly Process api;
+
+        private const string uriString = "http://domain.com";
+        private readonly HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, new Uri(uriString));
+        private readonly HttpClient httpClient = new HttpClient { BaseAddress = new Uri(uriString) };
+        private readonly OidcSettings settings = new OidcSettings(null)
+        {
+            DiscoveryPolicy = null,
+            GrantType = null,
+            ClientId = null,
+            ClientSecret = null,
+            Username = null,
+            Password = null,
+            Scope = null,
+            RedirectUri = null,
+            Code = null,
+            CodeVerifier = null,
+            HttpClient = null
+        };
+
+        public OidcAuthenticatorTests()
+        {
+            api = new Process { StartInfo = new ProcessStartInfo(Path.GetFullPath($"../../../../TestAuthorizationServer/bin/{(Debugger.IsAttached ? "Debug" : "Release")}/netcoreapp3.0/TestAuthorizationServer.exe")) };
+            api.Start();
+            pid = api.Id;
+        }
+
+        public void Dispose()
+        {
+            Process.GetProcessById(pid).Kill();
+            api?.Dispose();
+            requestMessage?.Dispose();
+            httpClient?.Dispose();
+        }
+
+        [Theory]
+        [InlineData("Request header 'Authorization' already set")]
+        [InlineData(null)]
+        public async Task AuthenticateWithRequestMessage_Sucess(string errorMessage)
+        {
+            settings.AuthUri = new Uri("http://localhost:5000");
+            settings.ClientId = "odata-manager";
+            settings.ClientSecret = "secret";
+            settings.Scope = "api1";
+            settings.Username = "bob";
+            settings.Password = "bob";
+            settings.GrantType = OidcConstants.GrantTypes.Password;
+
+            string error = null;
+            var replaceAuthHeader = errorMessage == null;
+            var authenticator = new OidcAuthenticator(settings)
+            {
+                ReplaceAuthorizationHeader = replaceAuthHeader
+            };
+
+            authenticator.OnTrace += (msg) => error = msg;
+
+            Assert.True(await authenticator.AuthenticateAsync(requestMessage));
+            Assert.Equal(replaceAuthHeader, await authenticator.AuthenticateAsync(requestMessage));
+
+            Assert.Equal(errorMessage, error);
+            Assert.NotNull(requestMessage.Headers.Authorization);
+            Assert.Equal(authenticator.Header, requestMessage.Headers.Authorization);
+            Assert.StartsWith("Bearer ey", requestMessage.Headers.Authorization.ToString());
+        }
+
+        [Theory]
+        [InlineData("Request header 'Authorization' already set")]
+        [InlineData(null)]
+        public async Task AuthenticateWithHttpClient_Sucess(string errorMessage)
+        {
+            settings.AuthUri = new Uri("http://localhost:5000");
+            settings.ClientId = "odata-manager";
+            settings.ClientSecret = "secret";
+            settings.Scope = "api1";
+            settings.Username = "bob";
+            settings.Password = "bob";
+            settings.GrantType = OidcConstants.GrantTypes.Password;
+
+            string error = null;
+            var replaceAuthHeader = errorMessage == null;
+            var authenticator = new OidcAuthenticator(settings)
+            {
+                ReplaceAuthorizationHeader = replaceAuthHeader
+            };
+            authenticator.OnTrace += (msg) => error = msg;
+
+            Assert.True(await authenticator.AuthenticateAsync(httpClient));
+            Assert.Equal(replaceAuthHeader, await authenticator.AuthenticateAsync(httpClient));
+
+            Assert.Equal(errorMessage, error);
+            Assert.NotNull(httpClient.DefaultRequestHeaders.Authorization);
+            Assert.Equal(authenticator.Header, httpClient.DefaultRequestHeaders.Authorization);
+            Assert.StartsWith("Bearer ey", httpClient.DefaultRequestHeaders.Authorization.ToString());
+        }
+
+        [Fact]
+        public void InstantiateWithInvalidValues_Exception()
+        {
+            var ex = Assert.Throws<ArgumentNullException>(() => new OidcAuthenticator(null));
+            Assert.Equal("oidcSettings", ex.ParamName);
+        }
+
+        [Fact]
+        public async Task AuthenticateOnNullObject_Exception()
+        {
+            var versioningManager = new OidcAuthenticator(settings);
+            ArgumentNullException ex;
+
+            ex = await Assert.ThrowsAsync<ArgumentNullException>(() => versioningManager.AuthenticateAsync(requestMessage: null));
+            Assert.Equal("requestMessage", ex.ParamName);
+
+            ex = await Assert.ThrowsAsync<ArgumentNullException>(() => versioningManager.AuthenticateAsync(httpClient: null));
+            Assert.Equal("httpClient", ex.ParamName);
+        }
+
+        [Fact]
+        public async Task GetTokenWithRefreshToken_Sucess()
+        {
+            settings.AuthUri = new Uri("http://localhost:5000");
+            settings.ClientId = "odata-manager-2";
+            settings.ClientSecret = "secret";
+            settings.Scope = "api1 offline_access";
+            settings.Username = "alice";
+            settings.Password = "alice";
+            settings.GrantType = OidcConstants.GrantTypes.Password;
+
+            string error = null;
+            var authenticator = new OidcAuthenticator(settings);
+            authenticator.OnTrace += (msg) => error = msg;
+
+            Assert.True(await authenticator.AuthenticateAsync(httpClient));
+
+            Assert.NotNull(httpClient.DefaultRequestHeaders.Authorization);
+            Assert.StartsWith("Bearer ey", httpClient.DefaultRequestHeaders.Authorization.ToString());
+
+            var token1 = await authenticator.GetTokenAsync(default);
+            Assert.NotNull(token1?.RefreshToken);
+
+            var token2 = await authenticator.GetTokenAsync(default);
+            Assert.NotNull(token2?.RefreshToken);
+
+            Assert.NotEqual(token1.RefreshToken, token2.RefreshToken);
+        }
+    }
+}
