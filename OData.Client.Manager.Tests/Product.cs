@@ -10,9 +10,9 @@ namespace OData.Client.Manager.Tests
 
         public string Description { get; set; }
 
-        public DateTime ReleaseDate { get; set; }
+        public DateTimeOffset ReleaseDate { get; set; }
 
-        public DateTime? DiscontinuedDate { get; set; }
+        public DateTimeOffset? DiscontinuedDate { get; set; }
 
         public int Rating { get; set; }
 

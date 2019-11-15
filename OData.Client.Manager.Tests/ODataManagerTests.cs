@@ -41,7 +41,7 @@ namespace OData.Client.Manager.Tests
                 Authenticator = new BasicAuthenticator("user", "pw"),
                 VersioningManager = new QueryParamVersioningManager("1.0")
             };
-            config.TypeCache.Converter.RegisterTypeConverter<Product>((IDictionary<string, object> dict) => dict.ToInstance<Product>());
+            config.TypeCache.Converter.RegisterTypeConverter<Product>((IDictionary<string, object?> dict) => dict.ToInstance<Product>());
             config.OnTrace = (format, args) => trace = string.Format(format, args);
             var manager = new ODataManager(config);
 
