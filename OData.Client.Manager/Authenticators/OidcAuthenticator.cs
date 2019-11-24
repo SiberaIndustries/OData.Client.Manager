@@ -21,7 +21,7 @@ namespace OData.Client.Manager.Authenticators
 
             httpClient = this.oidcSettings.HttpClient ?? new HttpClient();
             var discoveryPolicy = this.oidcSettings.DiscoveryPolicy ?? new DiscoveryPolicy();
-            discoveryCache = new DiscoveryCache(this.oidcSettings.AuthUri?.ToString(), () => httpClient, discoveryPolicy);
+            discoveryCache = new DiscoveryCache(this.oidcSettings.AuthUri?.ToString(), GetHttpClient, discoveryPolicy);
         }
 
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
@@ -29,6 +29,8 @@ namespace OData.Client.Manager.Authenticators
         {
             throw new NotSupportedException();
         }
+
+        private HttpMessageInvoker GetHttpClient() => httpClient;
 
         /// <inheritdoc cref="IAuthenticator" />
         public override Task<bool> AuthenticateAsync(HttpRequestMessage requestMessage, CancellationToken ct = default)

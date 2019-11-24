@@ -1,10 +1,21 @@
-﻿using Simple.OData.Client;
+﻿using OData.Client.Manager.Authenticators;
+using OData.Client.Manager.Versioning;
+using Simple.OData.Client;
 using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace OData.Client.Manager
 {
     public class ODataManager : IODataManager
     {
+        private readonly ODataClientSettings settings;
+        private readonly Func<HttpRequestMessage, Task> beforeRequestTemp;
+        private readonly IAuthenticator? authenticator;
+        private readonly IVersioningManager? versioningManager;
+        private readonly string? authenticatorName;
+        private readonly string? versioningManagerName;
+
         public ODataManager(ODataManagerConfiguration configuration)
         {
             if (configuration == null)
@@ -12,40 +23,24 @@ namespace OData.Client.Manager
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            var settings = configuration as ODataClientSettings;
+            settings = configuration as ODataClientSettings;
 
-            var authenticator = configuration.Authenticator;
+            authenticator = configuration.Authenticator;
             if (authenticator != null)
             {
-                var authenticatorName = authenticator.GetType().Name;
-                authenticator.OnTrace += (msg) => settings.OnTrace?.Invoke("{0}: {1}", new[] { authenticatorName, msg });
+                authenticatorName = authenticator.GetType().Name;
+                authenticator.OnTrace += TraceAuthenticatorMessage;
             }
 
-            var versioningManager = configuration.VersioningManager;
+            versioningManager = configuration.VersioningManager;
             if (versioningManager != null)
             {
-                var versioningManagerName = versioningManager.GetType().Name;
-                versioningManager.OnTrace += (msg) => settings.OnTrace?.Invoke("{0}: {1}", new[] { versioningManagerName, msg });
+                versioningManagerName = versioningManager.GetType().Name;
+                versioningManager.OnTrace += TraceVersioningManagerMessage;
             }
 
-            var beforeRequestTemp = settings.BeforeRequestAsync;
-            settings.BeforeRequest = async (requestMessage) =>
-            {
-                if (authenticator != null && !await authenticator.AuthenticateAsync(requestMessage).ConfigureAwait(false))
-                {
-                    settings.OnTrace?.Invoke("{0}: Authentication not successful", new[] { nameof(ODataManager) });
-                }
-
-                if (versioningManager != null && !versioningManager.ApplyVersion(requestMessage))
-                {
-                    settings.OnTrace?.Invoke("{0}: Applying version not successful", new[] { nameof(ODataManager) });
-                }
-
-                if (beforeRequestTemp != null)
-                {
-                    await beforeRequestTemp.Invoke(requestMessage).ConfigureAwait(false);
-                }
-            };
+            beforeRequestTemp = settings.BeforeRequestAsync;
+            settings.BeforeRequestAsync = BeforeRequestAsync;
 
             Client = new ODataClient(settings);
         }
@@ -63,5 +58,33 @@ namespace OData.Client.Manager
 
         /// <inheritdoc cref="IODataManager" />
         public IODataClient Client { get; private set; }
+
+        private async Task BeforeRequestAsync(HttpRequestMessage requestMessage)
+        {
+            if (authenticator != null && !await authenticator.AuthenticateAsync(requestMessage).ConfigureAwait(false))
+            {
+                settings.OnTrace?.Invoke("{0}: Authentication not successful", new[] { nameof(ODataManager) });
+            }
+
+            if (versioningManager != null && !versioningManager.ApplyVersion(requestMessage))
+            {
+                settings.OnTrace?.Invoke("{0}: Applying version not successful", new[] { nameof(ODataManager) });
+            }
+
+            if (beforeRequestTemp != null)
+            {
+                await beforeRequestTemp.Invoke(requestMessage).ConfigureAwait(false);
+            }
+        }
+
+        private void TraceAuthenticatorMessage(string msg)
+        {
+            settings.OnTrace?.Invoke("{0}: {1}", new[] { authenticatorName, msg });
+        }
+
+        private void TraceVersioningManagerMessage(string msg)
+        {
+            settings.OnTrace?.Invoke("{0}: {1}", new[] { versioningManagerName, msg });
+        }
     }
 }
