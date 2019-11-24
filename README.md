@@ -4,7 +4,6 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/6bx528e35dt43783/branch/master?svg=true)](https://ci.appveyor.com/project/SiberaIndustries/odata-client-manager/branch/master)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=SiberaIndustries_OData.Client.Manager&metric=alert_status)](https://sonarcloud.io/dashboard?id=SiberaIndustries_OData.Client.Manager)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=SiberaIndustries_OData.Client.Manager&metric=coverage)](https://sonarcloud.io/dashboard?id=SiberaIndustries_OData.Client.Manager)
-[![CodeFactor](https://www.codefactor.io/repository/github/siberaindustries/odata.client.manager/badge)](https://www.codefactor.io/repository/github/siberaindustries/odata.client.manager)
 
 ## Purpose
 
