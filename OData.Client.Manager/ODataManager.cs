@@ -9,6 +9,7 @@ namespace OData.Client.Manager
 {
     public class ODataManager : IODataManager
     {
+        private static readonly string[] DefaultArgs = new[] { nameof(ODataManager) };
         private readonly ODataClientSettings settings;
         private readonly Func<HttpRequestMessage, Task> beforeRequestTemp;
         private readonly IAuthenticator? authenticator;
@@ -22,8 +23,6 @@ namespace OData.Client.Manager
             {
                 throw new ArgumentNullException(nameof(configuration));
             }
-
-            settings = configuration as ODataClientSettings;
 
             authenticator = configuration.Authenticator;
             if (authenticator != null)
@@ -39,6 +38,7 @@ namespace OData.Client.Manager
                 versioningManager.OnTrace += TraceVersioningManagerMessage;
             }
 
+            settings = configuration as ODataClientSettings;
             beforeRequestTemp = settings.BeforeRequestAsync;
             settings.BeforeRequestAsync = BeforeRequestAsync;
 
@@ -63,12 +63,12 @@ namespace OData.Client.Manager
         {
             if (authenticator != null && !await authenticator.AuthenticateAsync(requestMessage).ConfigureAwait(false))
             {
-                settings.OnTrace?.Invoke("{0}: Authentication not successful", new[] { nameof(ODataManager) });
+                settings.OnTrace?.Invoke("{0}: Authentication not successful", DefaultArgs);
             }
 
             if (versioningManager != null && !versioningManager.ApplyVersion(requestMessage))
             {
-                settings.OnTrace?.Invoke("{0}: Applying version not successful", new[] { nameof(ODataManager) });
+                settings.OnTrace?.Invoke("{0}: Applying version not successful", DefaultArgs);
             }
 
             if (beforeRequestTemp != null)
