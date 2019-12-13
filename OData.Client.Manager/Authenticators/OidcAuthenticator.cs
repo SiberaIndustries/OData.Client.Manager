@@ -107,10 +107,10 @@ namespace OData.Client.Manager.Authenticators
 
                 if (token == null)
                 {
-                    token = oidcSettings.GrantType switch
+                    switch (oidcSettings.GrantType)
                     {
-                        OidcConstants.GrantTypes.Password => await httpClient.RequestPasswordTokenAsync(
-                            new PasswordTokenRequest
+                        case OidcConstants.GrantTypes.Password:
+                            using (var tokenRequest = new PasswordTokenRequest
                             {
                                 Address = discovery.TokenEndpoint,
                                 ClientId = oidcSettings.ClientId,
@@ -118,17 +118,27 @@ namespace OData.Client.Manager.Authenticators
                                 Scope = oidcSettings.Scope,
                                 UserName = oidcSettings.Username,
                                 Password = oidcSettings.Password
-                            }, ct).ConfigureAwait(false),
-                        OidcConstants.GrantTypes.ClientCredentials => await httpClient.RequestClientCredentialsTokenAsync(
-                            new ClientCredentialsTokenRequest
+                            })
+                            {
+                                token = await httpClient.RequestPasswordTokenAsync(tokenRequest, ct).ConfigureAwait(false);
+                                break;
+                            }
+
+                        case OidcConstants.GrantTypes.ClientCredentials:
+                            using (var tokenRequest = new ClientCredentialsTokenRequest
                             {
                                 Address = discovery.TokenEndpoint,
                                 ClientId = oidcSettings.ClientId,
                                 ClientSecret = oidcSettings.ClientSecret,
                                 Scope = oidcSettings.Scope
-                            }, ct).ConfigureAwait(false),
-                        OidcConstants.GrantTypes.AuthorizationCode => await httpClient.RequestAuthorizationCodeTokenAsync(
-                            new AuthorizationCodeTokenRequest
+                            })
+                            {
+                                token = await httpClient.RequestClientCredentialsTokenAsync(tokenRequest, ct).ConfigureAwait(false);
+                                break;
+                            }
+
+                        case OidcConstants.GrantTypes.AuthorizationCode:
+                            using (var tokenRequest = new AuthorizationCodeTokenRequest
                             {
                                 Address = discovery.TokenEndpoint,
                                 ClientId = oidcSettings.ClientId,
@@ -136,9 +146,15 @@ namespace OData.Client.Manager.Authenticators
                                 Code = oidcSettings.Code,
                                 RedirectUri = oidcSettings.RedirectUri?.ToString(),
                                 CodeVerifier = oidcSettings.CodeVerifier
-                            }, ct).ConfigureAwait(false),
-                        _ => throw new NotSupportedException($"Grant type '{oidcSettings.GrantType}' is not supported")
-                    };
+                            })
+                            {
+                                token = await httpClient.RequestAuthorizationCodeTokenAsync(tokenRequest, ct).ConfigureAwait(false);
+                                break;
+                            }
+
+                        default:
+                            throw new NotSupportedException($"Grant type '{oidcSettings.GrantType}' is not supported");
+                    }
                 }
                 else
                 {

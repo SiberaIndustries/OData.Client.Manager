@@ -22,7 +22,11 @@ namespace OData.Client.Manager.Extensions
             {
                 builder.Query = queryString;
             }
+#if !NETSTANDARD2_1
             else if (!builder.Query.Contains(name))
+#else
+            else if (!builder.Query.Contains(name, StringComparison.Ordinal))
+#endif
             {
                 builder.Query = builder.Query.Substring(1) + '&' + queryString;
             }

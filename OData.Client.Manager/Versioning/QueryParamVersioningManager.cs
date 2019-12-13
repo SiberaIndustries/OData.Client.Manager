@@ -26,7 +26,11 @@ namespace OData.Client.Manager.Versioning
                 throw new ArgumentNullException(nameof(requestMessage));
             }
 
+#if !NETSTANDARD2_1
             if (requestMessage.RequestUri.Query.Contains(parameterName))
+#else
+            if (requestMessage.RequestUri.Query.Contains(parameterName, StringComparison.Ordinal))
+#endif
             {
                 OnTrace?.Invoke($"The already existing query parameter {parameterName} gets overridden");
             }
