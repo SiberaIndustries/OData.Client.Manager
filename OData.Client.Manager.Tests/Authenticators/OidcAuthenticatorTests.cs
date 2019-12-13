@@ -35,7 +35,7 @@ namespace OData.Client.Manager.Tests.Authenticators
 
         public OidcAuthenticatorTests()
         {
-            api = new Process { StartInfo = new ProcessStartInfo(Path.GetFullPath($"../../../../TestAuthorizationServer/bin/{(Debugger.IsAttached ? "Debug" : "Release")}/netcoreapp3.0/TestAuthorizationServer.exe")) };
+            api = new Process { StartInfo = new ProcessStartInfo(Path.GetFullPath($"../../../../TestAuthorizationServer/bin/{(Debugger.IsAttached ? "Debug" : "Release")}/netcoreapp3.1/TestAuthorizationServer.exe")) };
             api.Start();
             pid = api.Id;
         }
