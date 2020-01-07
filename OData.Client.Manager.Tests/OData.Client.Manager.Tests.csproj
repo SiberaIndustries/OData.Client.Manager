@@ -2,13 +2,13 @@
 
   <PropertyGroup>
     <ProjectGuid>{337f47d0-c9e8-4312-92c6-6aa89f07bd92}</ProjectGuid>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>netcoreapp2.2;netcoreapp3.1</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.msbuild" Version="2.7.0" PrivateAssets="All" />
+    <PackageReference Include="coverlet.msbuild" Version="2.8.0" PrivateAssets="All" />
     <PackageReference Include="Extensions.Dictionary" Version="2.2.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
