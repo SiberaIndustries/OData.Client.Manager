@@ -29,10 +29,7 @@ namespace OData.Client.Manager.Versioning
 
         public bool ApplyVersion(HttpRequestMessage requestMessage)
         {
-            if (requestMessage == null)
-            {
-                throw new ArgumentNullException(nameof(requestMessage));
-            }
+            _ = requestMessage ?? throw new ArgumentNullException(nameof(requestMessage));
 
             if (requestMessage.Headers.TryGetValues(header, out IEnumerable<string> values) && values.Contains(value))
             {

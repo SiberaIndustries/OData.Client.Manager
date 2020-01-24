@@ -36,7 +36,7 @@ namespace OData.Client.Manager.Tests
         public async Task UseODataClientAndOnTraceAndConverter_Success()
         {
             var trace = default(string);
-            ODataManagerConfiguration config = new ODataManagerConfiguration(BaseUri)
+            var config = new ODataManagerConfiguration(BaseUri)
             {
                 Authenticator = new BasicAuthenticator("user", "pw"),
                 VersioningManager = new QueryParamVersioningManager("1.0")
