@@ -18,10 +18,7 @@ namespace OData.Client.Manager.Authenticators
         /// <inheritdoc cref="IAuthenticator" />
         public virtual Task<bool> AuthenticateAsync(HttpRequestMessage requestMessage, CancellationToken ct = default)
         {
-            if (requestMessage == null)
-            {
-                throw new ArgumentNullException(nameof(requestMessage));
-            }
+            _ = requestMessage ?? throw new ArgumentNullException(nameof(requestMessage));
 
             if (!ReplaceAuthorizationHeader && requestMessage.Headers.Authorization != null)
             {
@@ -36,10 +33,7 @@ namespace OData.Client.Manager.Authenticators
         /// <inheritdoc cref="IAuthenticator" />
         public virtual Task<bool> AuthenticateAsync(HttpClient httpClient, CancellationToken ct = default)
         {
-            if (httpClient == null)
-            {
-                throw new ArgumentNullException(nameof(httpClient));
-            }
+            _ = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
             if (!ReplaceAuthorizationHeader && httpClient.DefaultRequestHeaders.Authorization != null)
             {

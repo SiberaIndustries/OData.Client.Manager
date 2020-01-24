@@ -21,10 +21,7 @@ namespace OData.Client.Manager.Versioning
 
         public bool ApplyVersion(HttpRequestMessage requestMessage)
         {
-            if (requestMessage == null)
-            {
-                throw new ArgumentNullException(nameof(requestMessage));
-            }
+            _ = requestMessage ?? throw new ArgumentNullException(nameof(requestMessage));
 
 #if !NETSTANDARD2_1
             if (requestMessage.RequestUri.Query.Contains(parameterName))

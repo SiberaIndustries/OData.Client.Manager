@@ -19,10 +19,7 @@ namespace OData.Client.Manager
 
         public ODataManager(ODataManagerConfiguration configuration)
         {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            _ = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             authenticator = configuration.Authenticator;
             if (authenticator != null)
