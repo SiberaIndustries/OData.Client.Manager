@@ -9,17 +9,17 @@
 ## Purpose
 
 This repository provides a C# based OData client manager library.
-The Manager uses the `IODataClient` implementation of `Simple.OData.Client` to communicate with OData APIs and is able handle authorization and versioning requirements on top.
+The Manager uses the `IODataClient` implementation of `Simple.OData.Client` to communicate with OData APIs and is able to handle authorization and versioning requirements.
 
 ## Getting started
 
-The easiest way to start using the `ODataManager` is to install it’s Nuget package:
+The easiest way to start using the `ODataManager` is to install the Nuget package:
 
 ```sh
 Install-Package OData.Client.Manager
 ```
 
-In the source file where you will be using the `ODataManager` import the namespace:
+In the source file where you will be using `ODataManager` import the namespace:
 
 ```cs
 using OData.Client.Manager;
@@ -46,11 +46,11 @@ IEnumerable<dynamic> entities = await manager.Client
     .FindEntriesAsync();
 ```
 
-For more information about how to use the Odata client, please read the [documentation of Simple.OData.Client](https://github.com/simple-odata-client/Simple.OData.Client/wiki).
+For more information about how to use the Odata client, please read the [Simple.OData.Client documentation](https://github.com/simple-odata-client/Simple.OData.Client/wiki).
 
 ### Make use of autenticated and versioned requests
 
-* To make use of authentication, just use one of the existing authenticators in the `OData.Client.Manager.Authenticators` namespace or create your own by implementing the `IAuthenticator` interface.
+* To make use of authentication use one of the existing authenticators in the `OData.Client.Manager.Authenticators` namespace, or create your own by implementing the `IAuthenticator` interface.
 * To make use of authentication, just use one of the existing managers in the `OData.Client.Manager.Versioning` namespace or create your own by implementing the `IVersioningManager` interface.
 
 ```cs
@@ -81,8 +81,8 @@ var manager = new ODataManager(config);
 
 ## FAQ
 
-1. Why I get the error `Https required`?
-    * OIDC endponts must provide an encrypted connection (https) by default (except URIs of localhost). To disable this requirement, make use of the `OidcSettings` and set `RequireHttps` of the `DiscoveryPolicy` property to `false`: `settings.DiscoveryPolicy = new DiscoveryPolicy { RequireHttps = requireHttps };`.
+1. Why do I get the error `Https required`?
+    * OIDC endpoints must provide an encrypted connection (https) by default (except URIs of localhost). To disable this requirement, make use of the `OidcSettings` and set `RequireHttps` of the `DiscoveryPolicy` property to `false`: `settings.DiscoveryPolicy = new DiscoveryPolicy { RequireHttps = requireHttps };`.
 
 ## Links
 
