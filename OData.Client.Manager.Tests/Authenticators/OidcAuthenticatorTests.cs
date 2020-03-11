@@ -1,19 +1,18 @@
 ﻿using IdentityModel;
+using Microsoft.AspNetCore.Mvc.Testing;
 using OData.Client.Manager.Authenticators;
 using System;
-using System.Diagnostics;
-using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using TestAuthorizationServer;
 using Xunit;
 
 namespace OData.Client.Manager.Tests.Authenticators
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S3881:\"IDisposable\" should be implemented correctly", Justification = "Test case")]
-    public class OidcAuthenticatorTests : IDisposable
+    public class OidcAuthenticatorTests : IClassFixture<WebApplicationFactory<Startup>>, IDisposable
     {
-        private readonly int pid;
-        private readonly Process api;
+        private readonly WebApplicationFactory<Startup> factory;
 
         private const string uriString = "http://domain.com";
         private readonly HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, new Uri(uriString));
@@ -33,17 +32,13 @@ namespace OData.Client.Manager.Tests.Authenticators
             HttpClient = null
         };
 
-        public OidcAuthenticatorTests()
+        public OidcAuthenticatorTests(WebApplicationFactory<Startup> factory)
         {
-            api = new Process { StartInfo = new ProcessStartInfo(Path.GetFullPath($"../../../../TestAuthorizationServer/bin/{(Debugger.IsAttached ? "Debug" : "Release")}/netcoreapp3.1/TestAuthorizationServer.exe")) };
-            api.Start();
-            pid = api.Id;
+            this.factory = factory;
         }
 
         public void Dispose()
         {
-            Process.GetProcessById(pid).Kill();
-            api?.Dispose();
             requestMessage?.Dispose();
             httpClient?.Dispose();
         }
@@ -53,7 +48,8 @@ namespace OData.Client.Manager.Tests.Authenticators
         [InlineData(null)]
         public async Task AuthenticateWithRequestMessage_Sucess(string errorMessage)
         {
-            settings.AuthUri = new Uri("http://localhost:5000");
+            var client = factory.CreateDefaultClient(new Uri("http://localhost:5000"));
+            settings.HttpClient = client;
             settings.ClientId = "odata-manager";
             settings.ClientSecret = "secret";
             settings.Scope = "api1";
@@ -84,7 +80,8 @@ namespace OData.Client.Manager.Tests.Authenticators
         [InlineData(null)]
         public async Task AuthenticateWithHttpClient_Sucess(string errorMessage)
         {
-            settings.AuthUri = new Uri("http://localhost:5000");
+            var client = factory.CreateDefaultClient(new Uri("http://localhost:5000"));
+            settings.HttpClient = client;
             settings.ClientId = "odata-manager";
             settings.ClientSecret = "secret";
             settings.Scope = "api1";
@@ -132,7 +129,8 @@ namespace OData.Client.Manager.Tests.Authenticators
         [Fact]
         public async Task GetTokenWithRefreshToken_Sucess()
         {
-            settings.AuthUri = new Uri("http://localhost:5000");
+            var client = factory.CreateDefaultClient(new Uri("http://localhost:5000"));
+            settings.HttpClient = client;
             settings.ClientId = "odata-manager-2";
             settings.ClientSecret = "secret";
             settings.Scope = "api1 offline_access";

@@ -21,7 +21,11 @@ namespace OData.Client.Manager.Authenticators
 
             httpClient = this.oidcSettings.HttpClient ?? new HttpClient();
             var discoveryPolicy = this.oidcSettings.DiscoveryPolicy ?? new DiscoveryPolicy();
+#if NETSTANDARD2_0
+            discoveryCache = new DiscoveryCache(this.oidcSettings.AuthUri?.ToString(), httpClient, discoveryPolicy);
+#else
             discoveryCache = new DiscoveryCache(this.oidcSettings.AuthUri?.ToString(), GetHttpClient, discoveryPolicy);
+#endif
         }
 
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
@@ -103,6 +107,44 @@ namespace OData.Client.Manager.Authenticators
                 {
                     switch (oidcSettings.GrantType)
                     {
+#if NETSTANDARD2_0
+                        case OidcConstants.GrantTypes.Password:
+                            token = await httpClient.RequestPasswordTokenAsync(
+                                new PasswordTokenRequest
+                                {
+                                    Address = discovery.TokenEndpoint,
+                                    ClientId = oidcSettings.ClientId,
+                                    ClientSecret = oidcSettings.ClientSecret,
+                                    Scope = oidcSettings.Scope,
+                                    UserName = oidcSettings.Username,
+                                    Password = oidcSettings.Password
+                                }, ct).ConfigureAwait(false);
+                            break;
+
+                        case OidcConstants.GrantTypes.ClientCredentials:
+                            token = await httpClient.RequestClientCredentialsTokenAsync(
+                                new ClientCredentialsTokenRequest
+                                {
+                                    Address = discovery.TokenEndpoint,
+                                    ClientId = oidcSettings.ClientId,
+                                    ClientSecret = oidcSettings.ClientSecret,
+                                    Scope = oidcSettings.Scope
+                                }, ct).ConfigureAwait(false);
+                            break;
+
+                        case OidcConstants.GrantTypes.AuthorizationCode:
+                            token = await httpClient.RequestAuthorizationCodeTokenAsync(
+                                new AuthorizationCodeTokenRequest
+                                {
+                                    Address = discovery.TokenEndpoint,
+                                    ClientId = oidcSettings.ClientId,
+                                    ClientSecret = oidcSettings.ClientSecret,
+                                    Code = oidcSettings.Code,
+                                    RedirectUri = oidcSettings.RedirectUri?.ToString(),
+                                    CodeVerifier = oidcSettings.CodeVerifier
+                                }, ct).ConfigureAwait(false);
+                            break;
+#else
                         case OidcConstants.GrantTypes.Password:
                             using (var tokenRequest = new PasswordTokenRequest
                             {
@@ -145,6 +187,7 @@ namespace OData.Client.Manager.Authenticators
                                 token = await httpClient.RequestAuthorizationCodeTokenAsync(tokenRequest, ct).ConfigureAwait(false);
                                 break;
                             }
+#endif
 
                         default:
                             throw new NotSupportedException($"Grant type '{oidcSettings.GrantType}' is not supported");
@@ -152,6 +195,17 @@ namespace OData.Client.Manager.Authenticators
                 }
                 else
                 {
+#if NETSTANDARD2_0
+                    token = await httpClient.RequestRefreshTokenAsync(
+                        new RefreshTokenRequest
+                        {
+                            Address = discovery.TokenEndpoint,
+                            ClientId = oidcSettings.ClientId,
+                            ClientSecret = oidcSettings.ClientSecret,
+                            Scope = oidcSettings.Scope,
+                            RefreshToken = token.RefreshToken
+                        }, ct).ConfigureAwait(false);
+#else
                     using var request = new RefreshTokenRequest
                     {
                         Address = discovery.TokenEndpoint,
@@ -161,6 +215,7 @@ namespace OData.Client.Manager.Authenticators
                         RefreshToken = token.RefreshToken
                     };
                     token = await httpClient.RequestRefreshTokenAsync(request, ct).ConfigureAwait(false);
+#endif
                 }
 
                 if (token.IsError)
