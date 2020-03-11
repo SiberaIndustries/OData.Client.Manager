@@ -34,7 +34,9 @@ namespace OData.Client.Manager.Authenticators
             throw new NotSupportedException();
         }
 
+#if !NETSTANDARD2_0
         private HttpMessageInvoker GetHttpClient() => httpClient;
+#endif
 
         /// <inheritdoc cref="IAuthenticator" />
         public override Task<bool> AuthenticateAsync(HttpRequestMessage requestMessage, CancellationToken ct = default)
