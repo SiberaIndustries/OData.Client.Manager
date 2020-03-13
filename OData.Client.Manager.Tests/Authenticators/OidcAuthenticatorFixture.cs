@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Net.Http;
-using Xunit;
 
 namespace OData.Client.Manager.Tests.Authenticators
 {
     public class OidcAuthenticatorFixture :
-#if NETCOREAPP3_1
+#if NETCOREAPP3_1 && !NETCOREAPP2_2 && !LEGACY
         Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TestAuthorizationServer.Startup>,
 #endif
         IDisposable
     {
         private bool disposed = false;
 
-#if NETCOREAPP3_1
+#if NETCOREAPP3_1 && !NETCOREAPP2_2 && !LEGACY
         public OidcAuthenticatorFixture()
         {
             ClientOptions.BaseAddress = new Uri("http://localhost:5000");
@@ -21,7 +20,7 @@ namespace OData.Client.Manager.Tests.Authenticators
         public OidcAuthenticatorFixture()
         {
             var file = System.IO.Path.GetFullPath($"../../../../TestAuthorizationServer/bin/{(System.Diagnostics.Debugger.IsAttached ? "Debug" : "Release")}/netcoreapp3.1/TestAuthorizationServer.exe");
-            Assert.True(System.IO.File.Exists(file), "File doesn't exist: " + file);
+            Xunit.Assert.True(System.IO.File.Exists(file), "File doesn't exist: " + file);
             var process = new System.Diagnostics.Process
             {
                 StartInfo = new System.Diagnostics.ProcessStartInfo
@@ -38,13 +37,13 @@ namespace OData.Client.Manager.Tests.Authenticators
         public int Pid { get; private set; } = -1;
 #endif
 
-#if NETCOREAPP3_1
+#if NETCOREAPP3_1 && !NETCOREAPP2_2 && !LEGACY
         public HttpClient Client => CreateClient();
 #else
         public HttpClient Client => null;
 #endif
 
-#if NETCOREAPP3_1
+#if NETCOREAPP3_1 && !NETCOREAPP2_2 && !LEGACY
         protected override void Dispose(bool disposing)
         {
             if (!disposed)

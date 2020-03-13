@@ -6,6 +6,7 @@
     <Nullable>disable</Nullable>
     <TargetFrameworks>netcoreapp2.2;netcoreapp3.1</TargetFrameworks>
     <IsPackable>false</IsPackable>
+    <DefineConstants>$(DefineConstants)</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,7 +14,7 @@
     <PackageReference Include="coverlet.msbuild" Version="2.8.0" PrivateAssets="All" />
     <PackageReference Include="Extensions.Dictionary" Version="2.2.2" />
     <PackageReference Include="FakeItEasy" Version="6.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.2" Condition="'$(TargetFramework)' == 'netcoreapp3.1'" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.2" Condition="'$(TargetFramework)'=='netcoreapp3.1' AND '$(TargetFramework)'!='netcoreapp2.2' AND !$(DefineConstants.Contains('LEGACY'))" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
@@ -21,7 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OData.Client.Manager\OData.Client.Manager.csproj" />
-    <ProjectReference Include="..\TestAuthorizationServer\TestAuthorizationServer.csproj" Condition="'$(TargetFramework)' == 'netcoreapp3.1'" />
+    <ProjectReference Include="..\TestAuthorizationServer\TestAuthorizationServer.csproj" Condition="'$(TargetFramework)'=='netcoreapp3.1' AND '$(TargetFramework)'!='netcoreapp2.2' AND !$(DefineConstants.Contains('LEGACY'))" />
   </ItemGroup>
 
 </Project>
