@@ -231,7 +231,7 @@ namespace OData.Client.Manager.Tests.Authenticators
             authenticator.OnTrace += (msg) => output.WriteLine(msg);
 
             Assert.False(await authenticator.AuthenticateAsync(httpClient), settings.ClientId + " is authenticated with invalid values");
-            Assert.Contains("discovery response has errors: Error connecting to http://localhost:42/invalidVal/.well-known/openid-configuration.", error);
+            Assert.Contains("discovery response has errors: Error connecting to http://localhost:42/invalidVal/.well-known/openid-configuration", error);
             Assert.Contains("localToken response could not be set.", error);
         }
     }
