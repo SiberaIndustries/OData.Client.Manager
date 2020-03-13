@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net.Http;
-using Xunit;
 
 namespace OData.Client.Manager.Tests.Authenticators
 {
@@ -21,7 +20,7 @@ namespace OData.Client.Manager.Tests.Authenticators
         public OidcAuthenticatorFixture()
         {
             var file = System.IO.Path.GetFullPath($"../../../../TestAuthorizationServer/bin/{(System.Diagnostics.Debugger.IsAttached ? "Debug" : "Release")}/netcoreapp3.1/TestAuthorizationServer.exe");
-            Assert.True(System.IO.File.Exists(file), "File doesn't exist: " + file);
+            Xunit.Assert.True(System.IO.File.Exists(file), "File doesn't exist: " + file);
             var process = new System.Diagnostics.Process
             {
                 StartInfo = new System.Diagnostics.ProcessStartInfo
