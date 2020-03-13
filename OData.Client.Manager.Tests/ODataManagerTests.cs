@@ -1,12 +1,16 @@
 ﻿using Extensions.Dictionary;
+using FakeItEasy;
 using OData.Client.Manager.Authenticators;
 using OData.Client.Manager.Versioning;
 using Simple.OData.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace OData.Client.Manager.Tests
 {
@@ -14,6 +18,12 @@ namespace OData.Client.Manager.Tests
     {
         private const string BaseAdress = "https://services.odata.org/V4/OData/OData.svc/";
         private static readonly Uri BaseUri = new Uri(BaseAdress);
+        private readonly ITestOutputHelper output;
+
+        public ODataManagerTests(ITestOutputHelper output)
+        {
+            this.output = output;
+        }
 
         [Fact]
         public void CtorWithNullValues_Exception()
@@ -61,6 +71,56 @@ namespace OData.Client.Manager.Tests
 
             Assert.NotEmpty(trace);
             Assert.Equal(11, entities2.ToList().Count);
+        }
+
+        [Fact]
+        public async Task AuthenticateFailed_SuccessfullyTraced()
+        {
+            var authenticatorMock = A.Fake<IAuthenticator>(x => x.Wrapping(new BasicAuthenticator("user", "pw")));
+            A.CallTo(() => authenticatorMock.AuthenticateAsync(A<HttpRequestMessage>.Ignored, A<CancellationToken>.Ignored)).Returns(Task.FromResult(false));
+
+            var trace = default(string);
+            var config = new ODataManagerConfiguration(BaseUri)
+            {
+                Authenticator = authenticatorMock
+            };
+            config.OnTrace += (format, args) => trace += string.Format(format, args);
+            config.OnTrace += (format, args) => output.WriteLine(format, args);
+            var manager = new ODataManager(config);
+
+            authenticatorMock.OnTrace.Invoke("Triggered trace message in " + nameof(authenticatorMock));
+            await manager.Client
+                .For<Product>("Products")
+                .Top(1)
+                .FindEntriesAsync();
+
+            Assert.Contains("Triggered trace message in " + nameof(authenticatorMock), trace);
+            Assert.Contains("ODataManager: Authentication not successful", trace);
+        }
+
+        [Fact]
+        public async Task ApplyVersionFailed_SuccessfullyTraced()
+        {
+            var versioningManagerMock = A.Fake<IVersioningManager>(x => x.Wrapping(new QueryParamVersioningManager("1.0")));
+            A.CallTo(() => versioningManagerMock.ApplyVersion(A<HttpRequestMessage>.Ignored)).Returns(false);
+
+            var trace = default(string);
+            var config = new ODataManagerConfiguration(BaseUri)
+            {
+                VersioningManager = versioningManagerMock
+            };
+            config.OnTrace += (format, args) => trace += string.Format(format, args);
+            config.OnTrace += (format, args) => output.WriteLine(format, args);
+            var manager = new ODataManager(config);
+
+            versioningManagerMock.OnTrace.Invoke("Triggered trace message in " + nameof(versioningManagerMock));
+            await manager.Client
+                .For<Product>("Products")
+                .Top(1)
+                .FindEntriesAsync();
+
+            Assert.Contains("Triggered trace message in " + nameof(versioningManagerMock), trace);
+            Assert.Contains("ODataManager: Applying version not successful", trace);
         }
     }
 }

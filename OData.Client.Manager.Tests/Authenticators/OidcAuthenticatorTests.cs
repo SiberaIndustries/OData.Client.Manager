@@ -1,46 +1,58 @@
 ﻿using IdentityModel;
-using Microsoft.AspNetCore.Mvc.Testing;
+using IdentityModel.Client;
 using OData.Client.Manager.Authenticators;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using TestAuthorizationServer;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace OData.Client.Manager.Tests.Authenticators
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S3881:\"IDisposable\" should be implemented correctly", Justification = "Test case")]
-    public class OidcAuthenticatorTests : IClassFixture<WebApplicationFactory<Startup>>, IDisposable
+    public sealed class OidcAuthenticatorTests : IClassFixture<OidcAuthenticatorFixture>
     {
-        private readonly WebApplicationFactory<Startup> factory;
-
-        private const string uriString = "http://domain.com";
-        private readonly HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, new Uri(uriString));
-        private readonly HttpClient httpClient = new HttpClient { BaseAddress = new Uri(uriString) };
-        private readonly OidcSettings settings = new OidcSettings(null)
+        private readonly OidcAuthenticatorFixture fixture;
+        private readonly Uri uri = new Uri("http://domain.com");
+        private readonly ITestOutputHelper output;
+        private readonly OidcSettings[] settingsCollection = new[]
         {
-            DiscoveryPolicy = null,
-            GrantType = null,
-            ClientId = null,
-            ClientSecret = null,
-            Username = null,
-            Password = null,
-            Scope = null,
-            RedirectUri = null,
-            Code = null,
-            CodeVerifier = null,
-            HttpClient = null
+            new OidcSettings
+            {
+                AuthUri = new Uri("http://localhost:5000"),
+                DiscoveryPolicy = new DiscoveryPolicy { RequireHttps = false },
+                GrantType = OidcConstants.GrantTypes.Password,
+                ClientId = "odata-manager-1",
+                ClientSecret = "secret",
+                Username = "bob",
+                Password = "bob",
+                Scope = "api1"
+            },
+            new OidcSettings
+            {
+                AuthUri = new Uri("http://localhost:5000"),
+                DiscoveryPolicy = new DiscoveryPolicy { RequireHttps = false },
+                GrantType = OidcConstants.GrantTypes.Password,
+                ClientId = "odata-manager-2",
+                ClientSecret = "secret",
+                Username = "alice",
+                Password = "alice",
+                Scope = "api1 offline_access"
+            },
+            new OidcSettings
+            {
+                AuthUri = new Uri("http://localhost:5000"),
+                DiscoveryPolicy = new DiscoveryPolicy { RequireHttps = false },
+                GrantType = OidcConstants.GrantTypes.ClientCredentials,
+                ClientId = "odata-manager-3",
+                ClientSecret = "secret",
+                Scope = "api1"
+            }
         };
 
-        public OidcAuthenticatorTests(WebApplicationFactory<Startup> factory)
+        public OidcAuthenticatorTests(ITestOutputHelper output, OidcAuthenticatorFixture fixture)
         {
-            this.factory = factory;
-        }
-
-        public void Dispose()
-        {
-            requestMessage?.Dispose();
-            httpClient?.Dispose();
+            this.output = output;
+            this.fixture = fixture;
         }
 
         [Theory]
@@ -48,31 +60,31 @@ namespace OData.Client.Manager.Tests.Authenticators
         [InlineData(null)]
         public async Task AuthenticateWithRequestMessage_Sucess(string errorMessage)
         {
-            var client = factory.CreateDefaultClient(new Uri("http://localhost:5000"));
-            settings.HttpClient = client;
-            settings.ClientId = "odata-manager";
-            settings.ClientSecret = "secret";
-            settings.Scope = "api1";
-            settings.Username = "bob";
-            settings.Password = "bob";
-            settings.GrantType = OidcConstants.GrantTypes.Password;
-
-            string error = null;
-            var replaceAuthHeader = errorMessage == null;
-            var authenticator = new OidcAuthenticator(settings)
+            using var client = fixture.Client;
+            foreach (var settings in settingsCollection)
             {
-                ReplaceAuthorizationHeader = replaceAuthHeader
-            };
+                output.WriteLine(settings.ClientId);
+                using var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+                settings.HttpClient = client;
 
-            authenticator.OnTrace += (msg) => error = msg;
+                string error = null;
+                var replaceAuthHeader = errorMessage == null;
+                var authenticator = new OidcAuthenticator(settings)
+                {
+                    ReplaceAuthorizationHeader = replaceAuthHeader
+                };
 
-            Assert.True(await authenticator.AuthenticateAsync(requestMessage));
-            Assert.Equal(replaceAuthHeader, await authenticator.AuthenticateAsync(requestMessage));
+                authenticator.OnTrace += (msg) => error = msg;
+                authenticator.OnTrace += (msg) => output.WriteLine(msg);
 
-            Assert.Equal(errorMessage, error);
-            Assert.NotNull(requestMessage.Headers.Authorization);
-            Assert.Equal(authenticator.Header, requestMessage.Headers.Authorization);
-            Assert.StartsWith("Bearer ey", requestMessage.Headers.Authorization.ToString());
+                Assert.True(await authenticator.AuthenticateAsync(requestMessage), settings.ClientId + " not authenticated");
+                Assert.Equal(replaceAuthHeader, await authenticator.AuthenticateAsync(requestMessage));
+
+                Assert.Equal(errorMessage, error);
+                Assert.NotNull(requestMessage.Headers.Authorization);
+                Assert.Equal(authenticator.Header, requestMessage.Headers.Authorization);
+                Assert.StartsWith("Bearer ey", requestMessage.Headers.Authorization.ToString());
+            }
         }
 
         [Theory]
@@ -80,30 +92,31 @@ namespace OData.Client.Manager.Tests.Authenticators
         [InlineData(null)]
         public async Task AuthenticateWithHttpClient_Sucess(string errorMessage)
         {
-            var client = factory.CreateDefaultClient(new Uri("http://localhost:5000"));
-            settings.HttpClient = client;
-            settings.ClientId = "odata-manager";
-            settings.ClientSecret = "secret";
-            settings.Scope = "api1";
-            settings.Username = "bob";
-            settings.Password = "bob";
-            settings.GrantType = OidcConstants.GrantTypes.Password;
-
-            string error = null;
-            var replaceAuthHeader = errorMessage == null;
-            var authenticator = new OidcAuthenticator(settings)
+            using var client = fixture.Client;
+            foreach (var settings in settingsCollection)
             {
-                ReplaceAuthorizationHeader = replaceAuthHeader
-            };
-            authenticator.OnTrace += (msg) => error = msg;
+                output.WriteLine(settings.ClientId);
+                using var httpClient = new HttpClient { BaseAddress = uri };
+                settings.HttpClient = client;
 
-            Assert.True(await authenticator.AuthenticateAsync(httpClient));
-            Assert.Equal(replaceAuthHeader, await authenticator.AuthenticateAsync(httpClient));
+                string error = null;
+                var replaceAuthHeader = errorMessage == null;
+                var authenticator = new OidcAuthenticator(settings)
+                {
+                    ReplaceAuthorizationHeader = replaceAuthHeader
+                };
 
-            Assert.Equal(errorMessage, error);
-            Assert.NotNull(httpClient.DefaultRequestHeaders.Authorization);
-            Assert.Equal(authenticator.Header, httpClient.DefaultRequestHeaders.Authorization);
-            Assert.StartsWith("Bearer ey", httpClient.DefaultRequestHeaders.Authorization.ToString());
+                authenticator.OnTrace += (msg) => error = msg;
+                authenticator.OnTrace += (msg) => output.WriteLine(msg);
+
+                Assert.True(await authenticator.AuthenticateAsync(httpClient), settings.ClientId + " not authenticated");
+                Assert.Equal(replaceAuthHeader, await authenticator.AuthenticateAsync(httpClient));
+
+                Assert.Equal(errorMessage, error);
+                Assert.NotNull(httpClient.DefaultRequestHeaders.Authorization);
+                Assert.Equal(authenticator.Header, httpClient.DefaultRequestHeaders.Authorization);
+                Assert.StartsWith("Bearer ey", httpClient.DefaultRequestHeaders.Authorization.ToString());
+            }
         }
 
         [Fact]
@@ -116,7 +129,7 @@ namespace OData.Client.Manager.Tests.Authenticators
         [Fact]
         public async Task AuthenticateOnNullObject_Exception()
         {
-            var versioningManager = new OidcAuthenticator(settings);
+            var versioningManager = new OidcAuthenticator(new OidcSettings());
             ArgumentNullException ex;
 
             ex = await Assert.ThrowsAsync<ArgumentNullException>(() => versioningManager.AuthenticateAsync(requestMessage: null));
@@ -129,20 +142,17 @@ namespace OData.Client.Manager.Tests.Authenticators
         [Fact]
         public async Task GetTokenWithRefreshToken_Sucess()
         {
-            var client = factory.CreateDefaultClient(new Uri("http://localhost:5000"));
+            using var client = fixture.Client;
+            var settings = settingsCollection[1];
+            using var httpClient = new HttpClient { BaseAddress = uri };
             settings.HttpClient = client;
-            settings.ClientId = "odata-manager-2";
-            settings.ClientSecret = "secret";
-            settings.Scope = "api1 offline_access";
-            settings.Username = "alice";
-            settings.Password = "alice";
-            settings.GrantType = OidcConstants.GrantTypes.Password;
 
             string error = null;
             var authenticator = new OidcAuthenticator(settings);
             authenticator.OnTrace += (msg) => error = msg;
+            authenticator.OnTrace += (msg) => output.WriteLine(msg);
 
-            Assert.True(await authenticator.AuthenticateAsync(httpClient));
+            Assert.True(await authenticator.AuthenticateAsync(httpClient), settings.ClientId + " not authenticated");
 
             Assert.NotNull(httpClient.DefaultRequestHeaders.Authorization);
             Assert.StartsWith("Bearer ey", httpClient.DefaultRequestHeaders.Authorization.ToString());
@@ -154,6 +164,32 @@ namespace OData.Client.Manager.Tests.Authenticators
             Assert.NotNull(token2?.RefreshToken);
 
             Assert.NotEqual(token1.RefreshToken, token2.RefreshToken);
+        }
+
+        [Theory]
+        [InlineData(nameof(OidcSettings.ClientId), "invalidVal", "token response has errors: invalid_client")]
+        [InlineData(nameof(OidcSettings.ClientSecret), "invalidVal", "token response has errors: invalid_client")]
+        [InlineData(nameof(OidcSettings.Username), "invalidVal", "token response has errors: invalid_grant")]
+        [InlineData(nameof(OidcSettings.Password), "invalidVal", "token response has errors: invalid_grant")]
+        [InlineData(nameof(OidcSettings.Scope), "invalidVal", "token response has errors: invalid_scope")]
+        [InlineData(nameof(OidcSettings.GrantType), "invalidVal", "Grant type 'invalidVal' is not supported")]
+        public async Task AuthenticateWithInvalidValues_SuccessfullyTraced(string property, object value, string expectedError)
+        {
+            using var client = fixture.Client;
+            var settings = settingsCollection[0];
+            using var httpClient = new HttpClient { BaseAddress = uri };
+            settings.HttpClient = client;
+            settings.GetType().GetProperty(property).SetValue(settings, value);
+
+            string error = null;
+            var authenticator = new OidcAuthenticator(settings);
+
+            authenticator.OnTrace += (msg) => error += msg;
+            authenticator.OnTrace += (msg) => output.WriteLine(msg);
+
+            Assert.False(await authenticator.AuthenticateAsync(httpClient), settings.ClientId + " is authenticated with invalid values");
+            Assert.Contains(expectedError, error);
+            Assert.Contains("localToken response could not be set.", error);
         }
     }
 }
