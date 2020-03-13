@@ -5,14 +5,14 @@ using Xunit;
 namespace OData.Client.Manager.Tests.Authenticators
 {
     public class OidcAuthenticatorFixture :
-#if NETCOREAPP3_1
+#if NETCOREAPP3_1 && NATIVE
         Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TestAuthorizationServer.Startup>,
 #endif
         IDisposable
     {
         private bool disposed = false;
 
-#if NETCOREAPP3_1
+#if NETCOREAPP3_1 && NATIVE
         public OidcAuthenticatorFixture()
         {
             ClientOptions.BaseAddress = new Uri("http://localhost:5000");
@@ -38,13 +38,13 @@ namespace OData.Client.Manager.Tests.Authenticators
         public int Pid { get; private set; } = -1;
 #endif
 
-#if NETCOREAPP3_1
+#if NETCOREAPP3_1 && NATIVE
         public HttpClient Client => CreateClient();
 #else
         public HttpClient Client => null;
 #endif
 
-#if NETCOREAPP3_1
+#if NETCOREAPP3_1 && NATIVE
         protected override void Dispose(bool disposing)
         {
             if (!disposed)
