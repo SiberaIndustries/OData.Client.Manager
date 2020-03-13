@@ -16,9 +16,8 @@ namespace OData.Client.Manager.Tests.Authenticators
         private readonly ITestOutputHelper output;
         private readonly OidcSettings[] settingsCollection = new[]
         {
-            new OidcSettings
+            new OidcSettings(new Uri("http://localhost:5000"))
             {
-                AuthUri = new Uri("http://localhost:5000"),
                 DiscoveryPolicy = new DiscoveryPolicy { RequireHttps = false },
                 GrantType = OidcConstants.GrantTypes.Password,
                 ClientId = "odata-manager-1",
@@ -27,9 +26,8 @@ namespace OData.Client.Manager.Tests.Authenticators
                 Password = "bob",
                 Scope = "api1"
             },
-            new OidcSettings
+            new OidcSettings(new Uri("http://localhost:5000"))
             {
-                AuthUri = new Uri("http://localhost:5000"),
                 DiscoveryPolicy = new DiscoveryPolicy { RequireHttps = false },
                 GrantType = OidcConstants.GrantTypes.Password,
                 ClientId = "odata-manager-2",
@@ -38,9 +36,8 @@ namespace OData.Client.Manager.Tests.Authenticators
                 Password = "alice",
                 Scope = "api1 offline_access"
             },
-            new OidcSettings
+            new OidcSettings(new Uri("http://localhost:5000"))
             {
-                AuthUri = new Uri("http://localhost:5000"),
                 DiscoveryPolicy = new DiscoveryPolicy { RequireHttps = false },
                 GrantType = OidcConstants.GrantTypes.ClientCredentials,
                 ClientId = "odata-manager-3",
@@ -164,6 +161,31 @@ namespace OData.Client.Manager.Tests.Authenticators
             Assert.NotNull(token2?.RefreshToken);
 
             Assert.NotEqual(token1.RefreshToken, token2.RefreshToken);
+        }
+
+        [Fact]
+        public async Task AuthenticateByCode_SuccessfullyTraced()
+        {
+            using var client = fixture.Client;
+            using var httpClient = new HttpClient { BaseAddress = uri };
+
+            string error = null;
+            var authenticator = new OidcAuthenticator(new OidcSettings(new Uri("http://localhost:5000"))
+            {
+                DiscoveryPolicy = new DiscoveryPolicy { RequireHttps = false },
+                GrantType = OidcConstants.GrantTypes.AuthorizationCode,
+                ClientId = "odata-manager-4",
+                ClientSecret = "secret",
+                Scope = "api1",
+                Code = "1",
+                RedirectUri = new Uri("http://localhost:42/invalidVal"),
+                HttpClient = client
+            });
+            authenticator.OnTrace += (msg) => error = msg;
+            authenticator.OnTrace += (msg) => output.WriteLine(msg);
+
+            Assert.False(await authenticator.AuthenticateAsync(httpClient), "odata-manager-4 not authenticated");
+            Assert.Contains("localToken response could not be set.", error);
         }
 
         [Theory]

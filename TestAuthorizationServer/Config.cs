@@ -46,6 +46,14 @@ namespace TestAuthorizationServer
                 ClientSecrets = { new Secret("secret".Sha512()) },
                 AllowedGrantTypes = GrantTypes.ClientCredentials,
                 AllowedScopes = { "api1" }
+            },
+            new Client
+            {
+                ClientId = "odata-manager-4",
+                ClientSecrets = { new Secret("secret".Sha512()) },
+                RedirectUris = { "http://localhost:5000" },
+                AllowedGrantTypes = GrantTypes.Code,
+                AllowedScopes = { "api1" }
             }
         };
 
