@@ -178,6 +178,7 @@ namespace OData.Client.Manager.Tests.Authenticators
                 ClientSecret = "secret",
                 Scope = "api1",
                 Code = "1",
+                CodeVerifier = string.Empty,
                 RedirectUri = new Uri("http://localhost:42/invalidVal"),
                 HttpClient = client
             });
