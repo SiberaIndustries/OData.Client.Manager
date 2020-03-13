@@ -23,7 +23,7 @@ namespace OData.Client.Manager.Versioning
         {
             _ = requestMessage ?? throw new ArgumentNullException(nameof(requestMessage));
 
-#if !NETSTANDARD2_1
+#if NETSTANDARD2_0
             if (requestMessage.RequestUri.Query.Contains(parameterName))
 #else
             if (requestMessage.RequestUri.Query.Contains(parameterName, StringComparison.Ordinal))

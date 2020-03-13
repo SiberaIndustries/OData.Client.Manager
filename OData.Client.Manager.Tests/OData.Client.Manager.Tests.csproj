@@ -2,16 +2,17 @@
 
   <PropertyGroup>
     <ProjectGuid>{337f47d0-c9e8-4312-92c6-6aa89f07bd92}</ProjectGuid>
-    <TargetFrameworks>netcoreapp2.2;netcoreapp3.1</TargetFrameworks>
     <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <TargetFrameworks>netcoreapp2.2;netcoreapp3.1</TargetFrameworks>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="1.2.0" PrivateAssets="All" />
     <PackageReference Include="coverlet.msbuild" Version="2.8.0" PrivateAssets="All" />
-    <PackageReference Include="Extensions.Dictionary" Version="2.2.2" />
-    <PackageReference Include="Microsoft.AspNetCore.App" Condition="'$(TargetFramework)' == 'netcoreapp2.2'" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="2.2.0" Condition="'$(TargetFramework)' == 'netcoreapp2.2'" />
+    <PackageReference Include="Extensions.Dictionary" Version="2.2.3" />
+    <PackageReference Include="FakeItEasy" Version="6.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.2" Condition="'$(TargetFramework)' == 'netcoreapp3.1'" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
@@ -20,7 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OData.Client.Manager\OData.Client.Manager.csproj" />
-    <ProjectReference Include="..\TestauthorizationServer\TestauthorizationServer.csproj" />
+    <ProjectReference Include="..\TestAuthorizationServer\TestAuthorizationServer.csproj" Condition="'$(TargetFramework)' == 'netcoreapp3.1'" />
   </ItemGroup>
 
 </Project>

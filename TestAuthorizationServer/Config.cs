@@ -11,7 +11,7 @@ namespace TestAuthorizationServer
         public static IEnumerable<ApiResource> ApiResources => new List<ApiResource>
         {
             new ApiResource("api1", "Api 1"),
-            new ApiResource("api2", "Api 1"),
+            new ApiResource("api2", "Api 2"),
         };
 
         public static IEnumerable<IdentityResource> IdentityResources => new List<IdentityResource>
@@ -24,7 +24,7 @@ namespace TestAuthorizationServer
         {
             new Client
             {
-                ClientId = "odata-manager",
+                ClientId = "odata-manager-1",
                 ClientSecrets = { new Secret("secret".Sha512()) },
                 RedirectUris = { "http://localhost:5000" },
                 AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
@@ -39,6 +39,21 @@ namespace TestAuthorizationServer
                 AllowedScopes = { "api1" },
                 AllowOfflineAccess = true,
                 AccessTokenLifetime = 1
+            },
+            new Client
+            {
+                ClientId = "odata-manager-3",
+                ClientSecrets = { new Secret("secret".Sha512()) },
+                AllowedGrantTypes = GrantTypes.ClientCredentials,
+                AllowedScopes = { "api1" }
+            },
+            new Client
+            {
+                ClientId = "odata-manager-4",
+                ClientSecrets = { new Secret("secret".Sha512()) },
+                RedirectUris = { "http://localhost:5000" },
+                AllowedGrantTypes = GrantTypes.Code,
+                AllowedScopes = { "api1" }
             }
         };
 
