@@ -191,5 +191,25 @@ namespace OData.Client.Manager.Tests.Authenticators
             Assert.Contains(expectedError, error);
             Assert.Contains("localToken response could not be set.", error);
         }
+
+        [Fact]
+        public async Task AuthenticateWithInvalidUri_SuccessfullyTraced()
+        {
+            using var client = fixture.Client;
+            var settings = settingsCollection[0];
+            using var httpClient = new HttpClient { BaseAddress = uri };
+            settings.HttpClient = client;
+            settings.AuthUri = new Uri("http://localhost:42/invalidVal");
+
+            string error = null;
+            var authenticator = new OidcAuthenticator(settings);
+
+            authenticator.OnTrace += (msg) => error += msg;
+            authenticator.OnTrace += (msg) => output.WriteLine(msg);
+
+            Assert.False(await authenticator.AuthenticateAsync(httpClient), settings.ClientId + " is authenticated with invalid values");
+            Assert.Contains("discovery response has errors: Error connecting to http://localhost:42/invalidVal/.well-known/openid-configuration.", error);
+            Assert.Contains("localToken response could not be set.", error);
+        }
     }
 }
