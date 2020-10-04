@@ -89,10 +89,10 @@ jobs:
           DOTNET_CLI_TELEMETRY_OPTOUT: 1
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
           NUGET_XMLDOC_MODE: skip
-        run: dotnet pack -c release --no-restore --no-build --nologo
+        run: dotnet pack -o . -c release --no-restore --no-build --nologo
 
       - name: Upload NuGet-Package
         uses: actions/upload-artifact@v2
         with:
           name: NuGet-Packages
-          path: ./**/*.nupkg
+          path: ./*.nupkg
