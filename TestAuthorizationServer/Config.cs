@@ -8,10 +8,10 @@ namespace TestAuthorizationServer
 {
     internal static class Config
     {
-        public static IEnumerable<ApiResource> ApiResources => new List<ApiResource>
+        public static IEnumerable<ApiScope> ApiScopes => new List<ApiScope>
         {
-            new ApiResource("api1", "Api 1"),
-            new ApiResource("api2", "Api 2"),
+            new ApiScope("api1", "Api 1"),
+            new ApiScope("api2", "Api 2"),
         };
 
         public static IEnumerable<IdentityResource> IdentityResources => new List<IdentityResource>
