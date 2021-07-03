@@ -1,8 +1,7 @@
 # ODataClientManager
 
 [![NuGet](https://img.shields.io/nuget/v/OData.Client.Manager.svg)](https://www.nuget.org/packages/OData.Client.Manager)
-[![Azure DevOps Build Status](https://dev.azure.com/SiberaIndustries/OData.Client.Manager/_apis/build/status/SiberaIndustries.OData.Client.Manager?branchName=master)](https://dev.azure.com/SiberaIndustries/OData.Client.Manager/_build/latest?definitionId=1&branchName=master)
-[![AppVeyor Build status](https://ci.appveyor.com/api/projects/status/6bx528e35dt43783/branch/master?svg=true)](https://ci.appveyor.com/project/SiberaIndustries/odata-client-manager/branch/master)
+[![.NET Core](https://github.com/SiberaIndustries/OData.Client.Manager/workflows/.NET%20Core/badge.svg)](https://github.com/SiberaIndustries/OData.Client.Manager/actions?query=workflow%3A%22.NET+Core%22)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=SiberaIndustries_OData.Client.Manager&metric=alert_status)](https://sonarcloud.io/dashboard?id=SiberaIndustries_OData.Client.Manager)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=SiberaIndustries_OData.Client.Manager&metric=coverage)](https://sonarcloud.io/dashboard?id=SiberaIndustries_OData.Client.Manager)
 
