@@ -4,11 +4,11 @@
     <ProjectGuid>{991f47d0-c9e8-4312-92c6-6aa89f07bd92}</ProjectGuid>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="IdentityServer4" Version="3.1.2" />
+    <PackageReference Include="IdentityServer4" Version="4.1.2" />
   </ItemGroup>
 
 </Project>
