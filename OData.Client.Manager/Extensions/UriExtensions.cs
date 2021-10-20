@@ -24,12 +24,15 @@ namespace OData.Client.Manager.Extensions
             }
 #if NETSTANDARD2_0
             else if (!builder.Query.Contains(name))
-#else
-            else if (!builder.Query.Contains(name, StringComparison.Ordinal))
-#endif
             {
                 builder.Query = builder.Query.Substring(1) + '&' + queryString;
             }
+#else
+            else if (!builder.Query.Contains(name, StringComparison.Ordinal))
+            {
+                builder.Query = builder.Query[1..] + '&' + queryString;
+            }
+#endif
 
             return builder.Uri;
         }
