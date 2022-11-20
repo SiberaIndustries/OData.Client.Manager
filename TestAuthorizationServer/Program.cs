@@ -1,5 +1,8 @@
-﻿namespace TestAuthorizationServer
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace TestAuthorizationServer
 {
+    [ExcludeFromCodeCoverage]
     public class Program
     {
         public static void Main(string[] args)
