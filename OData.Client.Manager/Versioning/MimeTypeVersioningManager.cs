@@ -24,6 +24,8 @@
 
         public bool ApplyVersion(HttpRequestMessage requestMessage)
         {
+            _ = requestMessage ?? throw new ArgumentNullException(nameof(requestMessage));
+
             if (requestMessage.Headers.TryGetValues(header, out IEnumerable<string>? values) && values.Contains(value))
             {
                 OnTrace?.Invoke($"The already existing mime type and value {value} gets not applied again");
