@@ -14,8 +14,6 @@ namespace OData.Client.Manager.Authenticators
         /// <inheritdoc cref="IAuthenticator" />
         public virtual Task<bool> AuthenticateAsync(HttpRequestMessage requestMessage, CancellationToken ct = default)
         {
-            _ = requestMessage ?? throw new ArgumentNullException(nameof(requestMessage));
-
             if (!ReplaceAuthorizationHeader && requestMessage.Headers.Authorization != null)
             {
                 OnTrace?.Invoke($"Request header '{nameof(requestMessage.Headers.Authorization)}' already set");
@@ -29,8 +27,6 @@ namespace OData.Client.Manager.Authenticators
         /// <inheritdoc cref="IAuthenticator" />
         public virtual Task<bool> AuthenticateAsync(HttpClient httpClient, CancellationToken ct = default)
         {
-            _ = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-
             if (!ReplaceAuthorizationHeader && httpClient.DefaultRequestHeaders.Authorization != null)
             {
                 OnTrace?.Invoke($"Request header '{nameof(httpClient.DefaultRequestHeaders.Authorization)}' already set");
