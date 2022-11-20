@@ -1,7 +1,4 @@
 ﻿using OData.Client.Manager.Authenticators;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace OData.Client.Manager.Tests.Authenticators

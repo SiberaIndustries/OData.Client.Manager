@@ -1,5 +1,4 @@
 ﻿using OData.Client.Manager.Extensions;
-using System;
 using Xunit;
 
 namespace OData.Client.Manager.Tests

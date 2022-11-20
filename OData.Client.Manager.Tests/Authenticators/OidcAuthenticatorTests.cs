@@ -1,9 +1,6 @@
 ﻿using IdentityModel;
 using IdentityModel.Client;
 using OData.Client.Manager.Authenticators;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 

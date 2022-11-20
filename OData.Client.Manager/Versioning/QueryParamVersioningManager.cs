@@ -1,6 +1,4 @@
 ﻿using OData.Client.Manager.Extensions;
-using System;
-using System.Net.Http;
 
 namespace OData.Client.Manager.Versioning
 {

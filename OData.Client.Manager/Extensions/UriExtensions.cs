@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace OData.Client.Manager.Extensions
+﻿namespace OData.Client.Manager.Extensions
 {
     internal static class UriExtensions
     {

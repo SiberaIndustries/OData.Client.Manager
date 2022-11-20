@@ -4,6 +4,7 @@
     <ProjectGuid>{337f47d0-c9e8-4312-92c6-6aa89f07bd92}</ProjectGuid>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <IsPackable>false</IsPackable>
   </PropertyGroup>

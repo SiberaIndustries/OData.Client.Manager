@@ -1,9 +1,7 @@
 ﻿using OData.Client.Manager.Authenticators;
 using OData.Client.Manager.Versioning;
 using Simple.OData.Client;
-using System;
 using System.Net;
-using System.Net.Http;
 
 namespace OData.Client.Manager
 {

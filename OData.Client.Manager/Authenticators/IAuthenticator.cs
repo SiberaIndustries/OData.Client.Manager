@@ -1,9 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace OData.Client.Manager.Authenticators
+﻿namespace OData.Client.Manager.Authenticators
 {
     public interface IAuthenticator
     {

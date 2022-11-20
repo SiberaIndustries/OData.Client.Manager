@@ -3,12 +3,6 @@ using FakeItEasy;
 using OData.Client.Manager.Authenticators;
 using OData.Client.Manager.Versioning;
 using Simple.OData.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 

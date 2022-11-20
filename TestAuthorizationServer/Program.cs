@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-
-namespace TestAuthorizationServer
+﻿namespace TestAuthorizationServer
 {
     public static class Program
     {
