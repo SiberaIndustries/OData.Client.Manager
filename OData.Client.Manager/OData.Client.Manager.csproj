@@ -48,9 +48,7 @@
   </ItemGroup>
   
   <ItemGroup>
-	<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-	  <_Parameter1>OData.Client.Manager.Tests</_Parameter1>
-	</AssemblyAttribute>
+	<InternalsVisibleTo Include="OData.Client.Manager.Tests" />
   </ItemGroup>
 
 </Project>
