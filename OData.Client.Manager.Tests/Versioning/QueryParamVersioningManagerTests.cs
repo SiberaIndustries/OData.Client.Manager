@@ -1,6 +1,4 @@
 ﻿using OData.Client.Manager.Versioning;
-using System;
-using System.Net.Http;
 using Xunit;
 
 namespace OData.Client.Manager.Tests.Versioning

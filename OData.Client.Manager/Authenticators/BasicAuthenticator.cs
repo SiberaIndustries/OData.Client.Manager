@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net.Http;
-
-namespace OData.Client.Manager.Authenticators
+﻿namespace OData.Client.Manager.Authenticators
 {
     public class BasicAuthenticator : AuthenticatorBase
     {

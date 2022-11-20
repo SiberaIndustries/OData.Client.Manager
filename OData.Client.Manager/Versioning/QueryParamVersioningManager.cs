@@ -1,6 +1,4 @@
 ﻿using OData.Client.Manager.Extensions;
-using System;
-using System.Net.Http;
 
 namespace OData.Client.Manager.Versioning
 {
@@ -26,7 +24,7 @@ namespace OData.Client.Manager.Versioning
 #if NETSTANDARD2_0
             if (requestMessage.RequestUri.Query.Contains(parameterName))
 #else
-            if (requestMessage.RequestUri.Query.Contains(parameterName, StringComparison.Ordinal))
+            if (requestMessage.RequestUri!.Query.Contains(parameterName, StringComparison.Ordinal))
 #endif
             {
                 OnTrace?.Invoke($"The already existing query parameter {parameterName} gets overridden");

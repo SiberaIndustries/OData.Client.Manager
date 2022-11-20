@@ -1,7 +1,5 @@
 ﻿using IdentityModel;
 using IdentityModel.Client;
-using System;
-using System.Net.Http;
 
 namespace OData.Client.Manager.Authenticators
 {

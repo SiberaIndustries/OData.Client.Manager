@@ -1,5 +1,3 @@
-using System;
-using System.Net.Http;
 using Xunit;
 
 namespace OData.Client.Manager.Tests

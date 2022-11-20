@@ -1,7 +1,4 @@
 ﻿using OData.Client.Manager.Authenticators;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace OData.Client.Manager.Tests.Authenticators
@@ -9,8 +6,8 @@ namespace OData.Client.Manager.Tests.Authenticators
     public class JwtAuthenticatorTests
     {
         private const string uriString = "http://domain.com";
-        private readonly HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, new Uri(uriString));
-        private readonly HttpClient httpClient = new HttpClient { BaseAddress = new Uri(uriString) };
+        private readonly HttpRequestMessage requestMessage = new(HttpMethod.Get, new Uri(uriString));
+        private readonly HttpClient httpClient = new() { BaseAddress = new Uri(uriString) };
 
         [Theory]
         [InlineData("foobar", "Bearer foobar", "Request header 'Authorization' already set")]

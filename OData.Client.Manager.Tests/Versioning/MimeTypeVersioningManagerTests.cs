@@ -1,7 +1,4 @@
 ﻿using OData.Client.Manager.Versioning;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using Xunit;
 

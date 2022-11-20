@@ -1,47 +1,54 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Common">
-    <ProjectGuid>{da19bdb3-a27a-4de6-91fd-4d22e801a18c}</ProjectGuid>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
-    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>2.1.0</Version>
-    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+	<ProjectGuid>{da19bdb3-a27a-4de6-91fd-4d22e801a18c}</ProjectGuid>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<LangVersion>latest</LangVersion>
+	<Nullable>enable</Nullable>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<TargetFrameworks>netstandard2.0;netstandard2.1;net6.0</TargetFrameworks>
+	<Version>2.1.0</Version>
+	<AssemblyVersion>2.1.0.0</AssemblyVersion>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <PropertyGroup Label="Package">
-    <PackageId>OData.Client.Manager</PackageId>
-    <Authors>Tobias Sibera</Authors>
-    <Company>Sibera Industries</Company>
-    <Description>OData client manager library which uses the IODataClient implementation of Simple.OData.Client to communicate with OData APIs and handles OIDC authentication as well as request versioning requirements on top.</Description>
-    <PackageIcon>icon.png</PackageIcon>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/SiberaIndustries/OData.Client.Manager</RepositoryUrl>
-    <PackageReleaseNotes>https://github.com/SiberaIndustries/OData.Client.Manager/releases</PackageReleaseNotes>
-    <PackageProjectUrl>https://github.com/SiberaIndustries/OData.Client.Manager</PackageProjectUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageTags>OData;netstandard;client;api;rest;versioning;authentication</PackageTags>
+	<PackageId>OData.Client.Manager</PackageId>
+	<Authors>Tobias Sibera</Authors>
+	<Company>Sibera Industries</Company>
+	<Description>OData client manager library which uses the IODataClient implementation of Simple.OData.Client to communicate with OData APIs and handles OIDC authentication as well as request versioning requirements on top.</Description>
+	<PackageIcon>icon.png</PackageIcon>
+	<RepositoryType>git</RepositoryType>
+	<RepositoryUrl>https://github.com/SiberaIndustries/OData.Client.Manager</RepositoryUrl>
+	<PackageReleaseNotes>https://github.com/SiberaIndustries/OData.Client.Manager/releases</PackageReleaseNotes>
+	<PackageProjectUrl>https://github.com/SiberaIndustries/OData.Client.Manager</PackageProjectUrl>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<PackageTags>OData;netstandard;client;api;rest;versioning;authentication</PackageTags>
 
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+	<PublishRepositoryUrl>true</PublishRepositoryUrl>
+	<EmbedUntrackedSources>true</EmbedUntrackedSources>
+	<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
 
   <PropertyGroup Label="Code Analysis">
-    <Features>IOperation</Features>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <CodeAnalysisRuleSet>..\code-analysis.ruleset</CodeAnalysisRuleSet>
+	<Features>IOperation</Features>
+	<EnableNETAnalyzers>true</EnableNETAnalyzers>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<CodeAnalysisRuleSet>..\code-analysis.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="IdentityModel" Version="5.*" />
-    <PackageReference Include="Simple.OData.Client" Version="5.*" />
+	<PackageReference Include="IdentityModel" Version="6.*" />
+	<PackageReference Include="Simple.OData.Client" Version="6.*" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\icon.png" Link="icon.png" Visible="false" Pack="true" PackagePath="" />
+	<None Include="..\icon.png" Link="icon.png" Visible="false" Pack="true" PackagePath="" />
+	<None Include="..\README.md" Visible="false" Pack="true" PackagePath="" />
+  </ItemGroup>
+  
+  <ItemGroup>
+	<InternalsVisibleTo Include="OData.Client.Manager.Tests" />
   </ItemGroup>
 
 </Project>

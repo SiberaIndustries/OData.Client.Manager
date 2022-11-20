@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
-using System;
-using System.Net.Http;
 using TestAuthorizationServer;
 
 namespace OData.Client.Manager.Tests.Authenticators
 {
-    public class OidcAuthenticatorFixture : WebApplicationFactory<Startup>, IDisposable
+    public class OidcAuthenticatorFixture : WebApplicationFactory<Program>, IDisposable
     {
         private bool disposed = false;
 

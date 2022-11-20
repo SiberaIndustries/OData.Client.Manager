@@ -1,18 +1,16 @@
 ﻿using IdentityModel;
 using IdentityModel.Client;
 using OData.Client.Manager.Authenticators;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace OData.Client.Manager.Tests.Authenticators
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1033:Test classes decorated with 'Xunit.IClassFixture<TFixture>' or 'Xunit.ICollectionFixture<TFixture>' should add a constructor argument of type TFixture", Justification = "https://github.com/xunit/xunit/issues/2591")]
     public sealed class OidcAuthenticatorTests : IClassFixture<OidcAuthenticatorFixture>
     {
         private readonly OidcAuthenticatorFixture fixture;
-        private readonly Uri uri = new Uri("http://domain.com");
+        private readonly Uri uri = new("http://domain.com");
         private readonly ITestOutputHelper output;
         private readonly OidcSettings[] settingsCollection = new[]
         {

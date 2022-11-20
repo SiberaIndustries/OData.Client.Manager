@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net.Http;
-
-namespace OData.Client.Manager.Versioning
+﻿namespace OData.Client.Manager.Versioning
 {
     public interface IVersioningManager
     {

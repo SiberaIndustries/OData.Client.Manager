@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace OData.Client.Manager.Tests
+﻿namespace OData.Client.Manager.Tests
 {
     public class Product
     {
