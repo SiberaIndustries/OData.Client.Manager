@@ -11,7 +11,7 @@ namespace OData.Client.Manager.Tests
     public class ODataManagerTests
     {
         private const string BaseAdress = "https://services.odata.org/V4/OData/OData.svc/";
-        private static readonly Uri BaseUri = new Uri(BaseAdress);
+        private static readonly Uri BaseUri = new(BaseAdress);
         private readonly ITestOutputHelper output;
 
         public ODataManagerTests(ITestOutputHelper output)

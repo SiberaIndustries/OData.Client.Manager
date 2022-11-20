@@ -6,8 +6,8 @@ namespace OData.Client.Manager.Tests.Authenticators
     public class BasicAuthenticatorTests
     {
         private const string uriString = "http://domain.com";
-        private readonly HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, new Uri(uriString));
-        private readonly HttpClient httpClient = new HttpClient { BaseAddress = new Uri(uriString) };
+        private readonly HttpRequestMessage requestMessage = new(HttpMethod.Get, new Uri(uriString));
+        private readonly HttpClient httpClient = new() { BaseAddress = new Uri(uriString) };
 
         [Theory]
         [InlineData("foo", "bar", "Basic Zm9vOmJhcg==", "Request header 'Authorization' already set")]
