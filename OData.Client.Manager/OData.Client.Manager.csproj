@@ -7,8 +7,8 @@
 	<Nullable>enable</Nullable>
 	<ImplicitUsings>enable</ImplicitUsings>
 	<TargetFrameworks>netstandard2.0;netstandard2.1;net6.0</TargetFrameworks>
-	<Version>2.1.0</Version>
-	<AssemblyVersion>2.1.0.0</AssemblyVersion>
+	<Version>2.2.0</Version>
+	<AssemblyVersion>2.2.0.0</AssemblyVersion>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
