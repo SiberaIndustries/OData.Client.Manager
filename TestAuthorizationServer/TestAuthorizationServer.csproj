@@ -4,7 +4,7 @@
     <ProjectGuid>{991f47d0-c9e8-4312-92c6-6aa89f07bd92}</ProjectGuid>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>

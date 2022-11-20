@@ -31,7 +31,7 @@ namespace OData.Client.Manager.Versioning
         {
             _ = requestMessage ?? throw new ArgumentNullException(nameof(requestMessage));
 
-            if (requestMessage.Headers.TryGetValues(header, out IEnumerable<string> values) && values.Contains(value))
+            if (requestMessage.Headers.TryGetValues(header, out IEnumerable<string>? values) && values.Contains(value))
             {
                 OnTrace?.Invoke($"The already existing mime type and value {value} gets not applied again");
                 return true;

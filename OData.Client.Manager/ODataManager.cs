@@ -11,7 +11,7 @@ namespace OData.Client.Manager
     {
         private static readonly string[] DefaultArgs = new[] { nameof(ODataManager) };
         private readonly ODataClientSettings settings;
-        private readonly Func<HttpRequestMessage, Task> beforeRequestTemp;
+        private readonly Func<HttpRequestMessage, Task>? beforeRequestTemp;
         private readonly IAuthenticator? authenticator;
         private readonly IVersioningManager? versioningManager;
         private readonly string? authenticatorName;
@@ -76,12 +76,12 @@ namespace OData.Client.Manager
 
         private void TraceAuthenticatorMessage(string msg)
         {
-            settings.OnTrace?.Invoke("{0}: {1}", new[] { authenticatorName, msg });
+            settings.OnTrace?.Invoke("{0}: {1}", new[] { authenticatorName!, msg });
         }
 
         private void TraceVersioningManagerMessage(string msg)
         {
-            settings.OnTrace?.Invoke("{0}: {1}", new[] { versioningManagerName, msg });
+            settings.OnTrace?.Invoke("{0}: {1}", new[] { versioningManagerName!, msg });
         }
     }
 }
