@@ -32,7 +32,7 @@ namespace OData.Client.Manager
                 versioningManager.OnTrace += TraceVersioningManagerMessage;
             }
 
-            settings = configuration as ODataClientSettings;
+            settings = configuration;
             beforeRequestTemp = settings.BeforeRequestAsync;
             settings.BeforeRequestAsync = BeforeRequestAsync;
 
